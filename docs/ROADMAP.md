@@ -17,7 +17,7 @@
 - Skins de voitures, déblocables via étoiles ou vidéos.
 - Défi du jour (graine = date), séries de jours consécutifs.
 - Plus d'énigmes Casse-tête (relancer `puzzles:search` avec d'autres graines, viser 200 niveaux), packs thématiques.
-- Tutoriel plus visuel pour le Casse-tête (le toucher simple ne fait rien : il faut glisser).
+- ~~Tutoriel plus visuel~~ : fait (main animée sur les niveaux 1-2 de chaque mode). Écran d'accueil : fait.
 
 ## 4. Qualité
 - Analytique (niveaux abandonnés, durée, taux de vidéos regardées) pour régler la difficulté.

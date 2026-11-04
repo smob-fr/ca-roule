@@ -6,6 +6,7 @@ const E=require('../src/engine.js');const PZ=require('../data/puzzles.json');
  const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.addInitScript(()=>{localStorage.setItem('caroule.v1',JSON.stringify({level:1,max:1,test:true,seen:{},mode:'puzzle',pz:{level:3,max:3,stars:{}}}))});
  await p.goto('file://'+require('path').resolve(__dirname,'../dist/index.html')+'');await p.waitForTimeout(500);
+ await p.tap('#home-pz');await p.waitForTimeout(400); // quitte l'accueil
  const L=PZ[2];const cars=L.cars.map(c=>({h:!!c[0],fixed:c[1],len:c[3]}));
  const r=E.pzSolve(cars,L.cars.map(c=>c[2]),2e6);const s=r.path[0];
  const box=await p.evaluate(j=>{const n=document.querySelectorAll('.pcar')[j].getBoundingClientRect();return {x:n.x+n.width/2,y:n.y+n.height/2,cell:document.getElementById('board').getBoundingClientRect().width/6}},s.car);

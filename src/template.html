@@ -846,7 +846,273 @@ body.puzzle #btn-restart .lbl { display: none; }
 }
 .lv.pz .ms i.on { background: linear-gradient(180deg, #fff2a8, #ffb21a); }
 
+/* ---------- tutoriel : main qui montre le geste ---------- */
+.tuto { position: absolute; z-index: 7; width: 0; height: 0; pointer-events: none; }
+.tuto-hand {
+  position: absolute;
+  left: -19px;
+  top: -3px;
+  width: 54px;
+  height: 61px;
+  transform-origin: 19px 3px;
+  filter: drop-shadow(0 6px 8px rgba(5, 6, 25, 0.5));
+}
+.tuto-hand svg { display: block; width: 100%; height: 100%; }
+.tuto.tap .tuto-hand { animation: tutotap 1.3s ease-in-out infinite; }
+.tuto.drag .tuto-hand { animation: tutopress 2.4s ease-in-out infinite; }
+@keyframes tutotap {
+  0%, 100% { transform: translate(14px, 18px) scale(1); }
+  40% { transform: translate(0, 0) scale(1); }
+  52% { transform: translate(0, 0) scale(0.86); }
+  66% { transform: translate(0, 0) scale(1); }
+}
+@keyframes tutopress {
+  0%, 12% { transform: scale(1); }
+  22%, 72% { transform: scale(0.86); }
+  82%, 100% { transform: scale(1); }
+}
+.tuto-ring {
+  position: absolute;
+  left: -22px;
+  top: -22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-sizing: border-box;
+  opacity: 0;
+}
+.tuto.tap .tuto-ring { animation: tutoring 1.3s ease-out infinite; }
+.tuto.drag .tuto-ring { animation: tutoring2 2.4s ease-out infinite; }
+@keyframes tutoring { 0%, 48% { transform: scale(0.3); opacity: 0; } 52% { opacity: 0.95; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes tutoring2 { 0%, 18% { transform: scale(0.3); opacity: 0; } 22% { opacity: 0.95; } 45% { transform: scale(1.4); opacity: 0; } 100% { opacity: 0; } }
+.tuto-target {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 3px dashed rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  animation: ghost 1.2s ease-in-out infinite;
+}
+
+/* ---------- accueil ---------- */
+.home {
+  position: fixed;
+  inset: 0;
+  z-index: 18;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding:
+    max(14px, env(safe-area-inset-top, 0px))
+    max(16px, env(safe-area-inset-right, 0px))
+    max(16px, env(safe-area-inset-bottom, 0px))
+    max(16px, env(safe-area-inset-left, 0px));
+  background:
+    radial-gradient(120% 55% at 50% 0%, #4a4fc0 0%, rgba(74, 79, 192, 0) 60%),
+    radial-gradient(80% 45% at 100% 100%, rgba(255, 120, 80, 0.22) 0%, rgba(255, 120, 80, 0) 70%),
+    radial-gradient(80% 45% at 0% 100%, rgba(61, 139, 255, 0.25) 0%, rgba(61, 139, 255, 0) 70%),
+    linear-gradient(180deg, #23266a 0%, #0f1130 100%);
+  background-color: #15173d;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.home.leaving { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.home-hero {
+  position: relative;
+  flex: 1 0 auto;
+  padding: 8px 0 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 -16px;
+}
+.home-sky { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.home-sky i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+.home-roadwrap { position: relative; z-index: 1; align-self: stretch; flex: none; margin-top: 52px; }
+.home-road {
+  position: relative;
+  height: 92px;
+  background:
+    var(--noise),
+    linear-gradient(180deg, #3a3e55, #2c3046);
+  box-shadow: 0 -4px 0 #6a7194, 0 4px 0 #6a7194, 0 14px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.home-road::before {
+  content: "";
+  position: absolute;
+  left: -60px;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  margin-top: -2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0 26px, transparent 26px 52px);
+  animation: roadline 1.2s linear infinite;
+}
+@keyframes roadline { to { transform: translateX(52px); } }
+.road-car { position: absolute; width: 84px; height: 42px; }
+.road-car svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.45)); }
+.road-car.r { top: 2px; animation: driveR linear infinite; }
+.road-car.l { bottom: 2px; animation: driveL linear infinite; }
+.road-car.l svg { transform: rotate(180deg); }
+@keyframes driveR { from { left: -100px; } to { left: 100%; } }
+@keyframes driveL { from { left: 100%; } to { left: -100px; } }
+.home-logo {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.86;
+  font-family: var(--font-display);
+  font-weight: 700;
+  transform: rotate(-4deg);
+  animation: logoin 0.7s cubic-bezier(.2, 1.6, .4, 1) both;
+}
+.home-logo span {
+  display: block;
+  background: linear-gradient(180deg, #fff6c4 0%, #ffd23f 45%, #ff9f1a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 5px 0 #b45f00) drop-shadow(0 14px 22px rgba(0, 0, 0, 0.45));
+}
+.home-logo .l1 { font-size: 46px; }
+.home-logo .l2 { font-size: 84px; letter-spacing: -0.01em; }
+@keyframes logoin { from { transform: rotate(-4deg) scale(0.4); opacity: 0; } }
+.home-tag {
+  position: relative;
+  z-index: 2;
+  margin: 14px 0 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  font-size: 14px;
+  font-weight: 800;
+  color: #eef0ff;
+  animation: rise 0.5s 0.25s ease-out both;
+}
+.home-mascot.mascot-slot {
+  position: absolute;
+  z-index: 3;
+  right: 12px;
+  bottom: calc(100% + 1px);
+  width: 78px;
+  height: 76px;
+}
+.home-modes { flex: none; display: flex; flex-direction: column; gap: 12px; }
+.mode-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 112px 1fr 40px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 132px;
+  padding: 10px 14px 10px 10px;
+  border: 0;
+  border-radius: 26px;
+  text-align: left;
+  cursor: pointer;
+  color: #fff;
+  overflow: hidden;
+  transition: transform 0.12s ease;
+  animation: rise 0.5s ease-out both;
+}
+.mode-card:active { transform: scale(0.97); }
+.mode-card.run {
+  background: radial-gradient(120% 120% at 0% 0%, rgba(255, 220, 110, 0.35), rgba(255, 220, 110, 0) 60%), linear-gradient(135deg, #3c3a8f, #2a2a6e);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 201, 51, 0.55), inset 0 2px 0 rgba(255, 255, 255, 0.15), 0 14px 30px rgba(5, 6, 25, 0.45);
+  animation-delay: 0.35s;
+}
+.mode-card.pz {
+  background: radial-gradient(120% 120% at 0% 0%, rgba(110, 180, 255, 0.4), rgba(110, 180, 255, 0) 60%), linear-gradient(135deg, #1f4f9a, #163a78);
+  box-shadow: inset 0 0 0 1.5px rgba(124, 192, 255, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.15), 0 14px 30px rgba(5, 6, 25, 0.45);
+  animation-delay: 0.47s;
+}
+@keyframes rise { from { transform: translateY(24px); opacity: 0; } }
+.mode-txt { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.mode-name { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1; }
+.mode-desc { font-size: 13px; font-weight: 700; line-height: 1.3; color: rgba(235, 238, 255, 0.82); }
+.mode-prog {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.run .mode-prog { background: rgba(255, 201, 51, 0.2); color: var(--sign-hi); }
+.pz .mode-prog { background: rgba(124, 192, 255, 0.2); color: #cfe6ff; }
+.mode-go {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+.run .mode-go { background: linear-gradient(180deg, var(--sign-hi), var(--sign) 55%, var(--sign-deep)); color: var(--sign-ink); box-shadow: 0 6px 14px rgba(255, 170, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.6); }
+.pz .mode-go { background: linear-gradient(180deg, var(--psign-hi), var(--psign) 55%, var(--psign-deep)); color: #fff; box-shadow: 0 6px 14px rgba(40, 110, 255, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.5); }
+.mode-go svg { width: 18px; height: 18px; margin-left: 3px; }
+.mode-art { position: relative; width: 112px; height: 112px; }
+.mini {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 9px;
+  background-color: #3a3e55;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px);
+  background-size: var(--c) var(--c);
+  box-shadow: 0 0 0 3px #6a7194, 0 0 0 5px rgba(10, 12, 35, 0.5), 0 10px 18px rgba(5, 6, 25, 0.5);
+}
+.pz .mini { background-color: #2c3b58; box-shadow: 0 0 0 3px #5a7099, 0 0 0 5px rgba(10, 12, 35, 0.5), 0 10px 18px rgba(5, 6, 25, 0.5); }
+.mini .m { position: absolute; }
+.mini .m svg { position: absolute; left: 0; top: 0; display: block; overflow: visible; transform-origin: 0 0; filter: drop-shadow(0 2px 2px rgba(4, 6, 20, 0.45)); }
+.mini .rock { z-index: 0; }
+.mini .rock::before { inset: 16%; border-radius: 6px; background-size: auto, 100% 100%; }
+.mini .rock::after { display: none; }
+.mini .exit {
+  position: absolute;
+  width: 5px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #8dffc6, #34d58a);
+  box-shadow: 0 0 10px rgba(52, 213, 138, 0.9);
+}
+.mini .tuto-hand { left: -13px; top: -2px; width: 36px; height: 41px; transform-origin: 13px 2px; }
+.mini .tuto-ring { left: -15px; top: -15px; width: 30px; height: 30px; border-width: 2.5px; }
+.m.go-r { animation: miniR 3.2s cubic-bezier(.5, 0, .7, .4) infinite; }
+.m.go-down { animation: miniDown 4.2s ease-in-out infinite; }
+.m.go-hero { animation: miniHero 4.2s ease-in-out infinite; }
+@keyframes miniR { 0%, 42% { transform: translateX(0); opacity: 1; } 62% { transform: translateX(110px); opacity: 1; } 63% { opacity: 0; } 80% { transform: translateX(0); opacity: 0; } 92%, 100% { opacity: 1; } }
+@keyframes miniDown { 0%, 12% { transform: translateY(0); } 30%, 86% { transform: translateY(calc(var(--c) * 2)); } 100% { transform: translateY(0); } }
+@keyframes miniHero { 0%, 34% { transform: translateX(0); opacity: 1; } 56% { transform: translateX(calc(var(--c) * 5)); opacity: 1; } 60% { opacity: 0; } 86% { transform: translateX(0); opacity: 0; } 96%, 100% { opacity: 1; } }
+.home-foot { flex: none; margin: 0; text-align: center; font-size: 12px; font-weight: 800; color: rgba(222, 226, 255, 0.5); }
+.sheet-tools { display: flex; gap: 8px; }
+
 @media (prefers-reduced-motion: reduce) {
+  .tuto .tuto-hand, .tuto .tuto-ring, .tuto-target, .home-sky i, .home-road::before, .road-car, .m.go-r, .m.go-down, .m.go-hero, .home-logo, .home-tag, .mode-card { animation: none !important; }
+  .road-car.r { left: 12%; } .road-car.l { left: 58%; }
   .mascot, .mascot .eye-open { animation: none !important; }
   .card, .sheet-card, .scrim, .tip, .stars span { animation: none; }
   .card .mascot-slot.big::before, .taps, .timer.low .bar i { animation: none; }
@@ -913,6 +1179,40 @@ body.puzzle #btn-restart .lbl { display: none; }
 
 <div class="banner" id="banner">PUB · BANNIÈRE 320×50 (exemple)</div>
 
+<!-- Accueil -->
+<section class="home" id="home" aria-labelledby="home-title">
+  <div class="home-hero">
+    <div class="home-sky" id="home-sky"></div>
+    <h2 class="home-logo" id="home-title"><span class="l1">Ça</span><span class="l2">Roule</span></h2>
+    <p class="home-tag">Le casse-tête du parking</p>
+    <div class="home-roadwrap">
+      <div class="home-road" id="home-road"></div>
+      <div class="mascot-slot home-mascot" id="mascot-home"></div>
+    </div>
+  </div>
+  <div class="home-modes">
+    <button class="mode-card run" id="home-run" type="button">
+      <span class="mode-art" id="art-run" aria-hidden="true"></span>
+      <span class="mode-txt">
+        <span class="mode-name">Course</span>
+        <span class="mode-desc">Touchez les voitures pour vider le parking, sans carambolage et avant la fin du chrono.</span>
+        <span class="mode-prog" id="prog-run"></span>
+      </span>
+      <span class="mode-go" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z" fill="currentColor"/></svg></span>
+    </button>
+    <button class="mode-card pz" id="home-pz" type="button">
+      <span class="mode-art" id="art-pz" aria-hidden="true"></span>
+      <span class="mode-txt">
+        <span class="mode-name">Casse-tête</span>
+        <span class="mode-desc">Faites glisser les voitures pour libérer la rouge, en un minimum de coups.</span>
+        <span class="mode-prog" id="prog-pz"></span>
+      </span>
+      <span class="mode-go" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z" fill="currentColor"/></svg></span>
+    </button>
+  </div>
+  <p class="home-foot">1000 niveaux · 50 énigmes</p>
+</section>
+
 <!-- Niveau gagné -->
 <div class="scrim" id="win" hidden>
   <div class="card" role="dialog" aria-modal="true" aria-labelledby="win-title">
@@ -943,9 +1243,14 @@ body.puzzle #btn-restart .lbl { display: none; }
   <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="levels-title">
     <div class="sheet-head">
       <h2 id="levels-title">Niveaux</h2>
+      <div class="sheet-tools">
+      <button class="icon-btn" id="btn-home" type="button" aria-label="Accueil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11L12 4l8.5 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></svg>
+      </button>
       <button class="icon-btn" id="levels-close" type="button" aria-label="Fermer">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg>
       </button>
+      </div>
     </div>
     <div class="seg" role="tablist" aria-label="Mode de jeu">
       <button type="button" role="tab" id="tab-run" aria-selected="true">Course</button>
@@ -1275,6 +1580,7 @@ body.puzzle #btn-restart .lbl { display: none; }
       buddy.look(lookX, lookY);
       buddyWin.look(lookX, lookY);
       buddyLose.look(lookX, lookY);
+      if (window.__caHome) window.__caHome.look(lookX, lookY);
     });
   }
   function say(text, ms) {
@@ -1317,7 +1623,7 @@ body.puzzle #btn-restart .lbl { display: none; }
   setInterval(() => {
     const now = performance.now(), dt = Math.min(250, now - lastTick);
     lastTick = now;
-    if (!S.timeTotal || !S.timerOn || S.over || document.hidden || !$('ad').hidden || !$('levels').hidden) return;
+    if (!S.timeTotal || !S.timerOn || S.over || document.hidden || !$('ad').hidden || !$('levels').hidden || !$('home').hidden) return;
     S.timeLeft -= dt;
     drawTimer();
     if (S.timeLeft <= 0) {
@@ -1399,6 +1705,7 @@ body.puzzle #btn-restart .lbl { display: none; }
         tb.style.top = bh / 2 - v[1] * off + 'px';
       }
     }
+    tutoRun();
   }
 
   function buildCars() {
@@ -1584,6 +1891,7 @@ body.puzzle #btn-restart .lbl { display: none; }
       pzPlace(j, P.pos[j]);
     });
     pzGhostPlace();
+    tutoPz();
   }
 
   const starsFor = (moves, opt) => (moves <= opt ? 3 : moves <= Math.ceil(opt * 1.4) ? 2 : 1);
@@ -1597,6 +1905,7 @@ body.puzzle #btn-restart .lbl { display: none; }
     $('pz-stars').innerHTML = [1, 2, 3].map(i => '<span class="' + (i <= s ? 'on' : '') + '">' + STAR + '</span>').join('');
     $('pz-stars').setAttribute('aria-label', s + (s > 1 ? ' étoiles en jeu' : ' étoile en jeu'));
     $('btn-undo').disabled = !P.hist.length || P.done;
+    if (P.cell) tutoPz();
   }
 
   function pzClearHint() {
@@ -1727,6 +2036,7 @@ body.puzzle #btn-restart .lbl { display: none; }
     P.drag = { j, id: e.pointerId, x0: e.clientX, y0: e.clientY, p0: P.pos[j], lo: r[0], hi: r[1], f: P.pos[j] };
     b.classList.add('drag');
     b.classList.remove('snap');
+    tutoClear();
     try { b.setPointerCapture(e.pointerId); } catch (err) { /* ignoré */ }
     e.preventDefault();
   });
@@ -1749,6 +2059,7 @@ body.puzzle #btn-restart .lbl { display: none; }
     pzPlace(d.j, to);
     setTimeout(() => node.classList.remove('snap'), 200);
     pzCommit(d.j, d.p0, to);
+    if (d.p0 === to) tutoPz();
   };
   board.addEventListener('pointerup', endDrag);
   board.addEventListener('pointercancel', endDrag);
@@ -1783,6 +2094,8 @@ body.puzzle #btn-restart .lbl { display: none; }
     const c = S.byId[id];
     if (!c || c.gone || c.moving) return;
     clearHint();
+    tutoClear();
+    tutoLater(c.taps > 1 ? 300 : 650);
     if (S.timeTotal && !S.timerOn) { S.timerOn = true; lastTick = performance.now(); }
     if (c.taps > 1) { c.taps--; setBadge(c); warmUp(c); return; }
     if (c.taps === 1) { c.taps = 0; setBadge(c); }
@@ -2015,6 +2328,195 @@ body.puzzle #btn-restart .lbl { display: none; }
     if (cur) g.scrollTop = Math.max(0, cur.offsetTop - g.clientHeight / 2 + cur.offsetHeight / 2);
   }
 
+  /* ---------- tutoriel : une main montre le geste sur les 2 premiers niveaux de chaque mode ---------- */
+  const TUTO_LEVELS = 2;
+  /* Main gantée qui pointe ; le bout de l'index est en (19, 3) dans le repère 54 x 61 de .tuto-hand */
+  const HAND_PARTS = [
+    ['rect', 'x="16" y="1" width="14" height="40" rx="7"'],
+    ['rect', 'x="28" y="22" width="12" height="24" rx="6"'],
+    ['rect', 'x="38" y="26" width="11" height="22" rx="5.5"'],
+    ['rect', 'x="47" y="31" width="9" height="18" rx="4.5"'],
+    ['rect', 'x="2" y="34" width="24" height="12" rx="6" transform="rotate(32 14 40)"'],
+    ['rect', 'x="13" y="30" width="43" height="34" rx="14"']
+  ];
+  const HAND = '<svg viewBox="0 0 64 72" aria-hidden="true">' +
+    HAND_PARTS.map(p => '<' + p[0] + ' ' + p[1] + ' fill="#23264f" stroke="#23264f" stroke-width="6"/>').join('') +
+    HAND_PARTS.map(p => '<' + p[0] + ' ' + p[1] + ' fill="#fff"/>').join('') +
+    '<path d="M20 6 v14" stroke="#e3e7ff" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M33 48 v8 M42 49 v7" stroke="#cfd4f2" stroke-width="2.5" stroke-linecap="round"/>' +
+    '<rect x="17" y="60" width="36" height="11" rx="4" fill="#3d8bff" stroke="#23264f" stroke-width="3"/>' +
+    '</svg>';
+  let tutoEl = null, tutoTarget = null, tutoTimer = null, homeOpen = false;
+  function handEl(parent, x, y, kind) {
+    const el = document.createElement('div');
+    el.className = 'tuto ' + kind;
+    el.innerHTML = '<i class="tuto-ring"></i><span class="tuto-hand">' + HAND + '</span>';
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    parent.appendChild(el);
+    return el;
+  }
+  function tutoClear() {
+    clearTimeout(tutoTimer);
+    if (tutoEl) { tutoEl.remove(); tutoEl = null; }
+    if (tutoTarget) { tutoTarget.remove(); tutoTarget = null; }
+  }
+  function tutoLater(ms) {
+    const s = S.session;
+    clearTimeout(tutoTimer);
+    tutoTimer = setTimeout(() => { if (s === S.session) (S.mode === 'puzzle' ? tutoPz : tutoRun)(); }, ms);
+  }
+  /* Course : la main tapote une voiture qui a la voie libre. */
+  function tutoRun() {
+    tutoClear();
+    if (S.mode !== 'run' || S.level > TUTO_LEVELS || S.over || homeOpen) return;
+    const id = pickHint();
+    if (id == null) return;
+    const node = S.nodes.get(id);
+    if (!node) return;
+    tutoEl = handEl(board, node.offsetLeft + node.offsetWidth / 2, node.offsetTop + node.offsetHeight / 2, 'tap');
+  }
+  /* Casse-tête : la main fait glisser la voiture du prochain coup optimal jusqu'à sa case cible. */
+  function tutoPz() {
+    tutoClear();
+    if (S.mode !== 'puzzle' || P.n > TUTO_LEVELS || P.done || P.drag || homeOpen) return;
+    const r = E.pzSolve(P.cars.map(c => ({ h: c.h, fixed: c.fixed, len: c.len })), P.pos, 200000);
+    if (!r || !r.path || !r.path.length) return;
+    const st = r.path[0], c = P.cars[st.car], cell = P.cell;
+    const at = p => (c.h ? [(p + c.len / 2) * cell, (c.fixed + 0.5) * cell] : [(c.fixed + 0.5) * cell, (p + c.len / 2) * cell]);
+    const a = at(P.pos[st.car]), b = at(st.to), dx = b[0] - a[0], dy = b[1] - a[1];
+    tutoTarget = document.createElement('div');
+    tutoTarget.className = 'tuto-target';
+    tutoTarget.style.left = (c.h ? st.to : c.fixed) * cell + 3 + 'px';
+    tutoTarget.style.top = (c.h ? c.fixed : st.to) * cell + 3 + 'px';
+    tutoTarget.style.width = (c.h ? c.len : 1) * cell - 6 + 'px';
+    tutoTarget.style.height = (c.h ? 1 : c.len) * cell - 6 + 'px';
+    board.appendChild(tutoTarget);
+    tutoEl = handEl(board, a[0], a[1], 'drag');
+    if (reduce) return;
+    const mv = 'translate(' + dx + 'px,' + dy + 'px)';
+    tutoEl.animate([
+      { transform: 'translate(0,0)', opacity: 0, offset: 0 },
+      { transform: 'translate(0,0)', opacity: 1, offset: 0.1 },
+      { transform: 'translate(0,0)', opacity: 1, offset: 0.22 },
+      { transform: mv, opacity: 1, offset: 0.72 },
+      { transform: mv, opacity: 1, offset: 0.86 },
+      { transform: mv, opacity: 0, offset: 1 }
+    ], { duration: 2400, iterations: Infinity, easing: 'ease-in-out' });
+  }
+
+  /* ---------- accueil ---------- */
+  const home = $('home');
+  const buddyHome = makeMascot($('mascot-home'));
+  window.__caHome = buddyHome;
+  function miniCar(mini, c, x, y, len, horiz, rot, svg, cls) {
+    const m = document.createElement('span');
+    m.className = 'm' + (cls ? ' ' + cls : '');
+    const w = (horiz ? len : 1) * c, h = (horiz ? 1 : len) * c;
+    m.style.cssText = 'left:' + x * c + 'px;top:' + y * c + 'px;width:' + w + 'px;height:' + h + 'px';
+    m.innerHTML = svg;
+    const s = m.firstChild;
+    s.style.cssText = 'width:' + len * c + 'px;height:' + c + 'px;left:' + (w - len * c) / 2 + 'px;top:' + (h - c) / 2 + 'px;transform-origin:50% 50%;transform:rotate(' + rot + 'deg)';
+    mini.appendChild(m);
+    return m;
+  }
+  function miniBoard(host, cols, rows, c) {
+    const mini = document.createElement('div');
+    mini.className = 'mini';
+    mini.style.cssText = 'width:' + cols * c + 'px;height:' + rows * c + 'px;--c:' + c + 'px';
+    host.appendChild(mini);
+    return mini;
+  }
+  function buildHome() {
+    /* étoiles */
+    const sky = $('home-sky');
+    for (let i = 0; i < 28; i++) {
+      const d = document.createElement('i');
+      d.style.left = Math.random() * 100 + '%';
+      d.style.top = Math.random() * 55 + '%';
+      d.style.animationDelay = -Math.random() * 3 + 's';
+      if (i % 5 === 0) { d.style.width = d.style.height = '4px'; }
+      sky.appendChild(d);
+    }
+    /* route animée */
+    const road = $('home-road');
+    const lanes = [['r', ['#ef5b43', '#4a90f2', '#f4b81d', '#62bf5d'], 7.5], ['l', ['#9a6ee0', '#22b8a5', '#ee79ac'], 9]];
+    for (const [side, colors, dur] of lanes) {
+      colors.forEach((col, i) => {
+        const d = document.createElement('span');
+        d.className = 'road-car ' + side;
+        d.innerHTML = carSVG(2, col);
+        d.style.animationDuration = dur + 's';
+        d.style.animationDelay = -(dur / colors.length) * i - (side === 'l' ? 1.3 : 0) + 's';
+        road.appendChild(d);
+      });
+    }
+    /* vignette Course : 4 x 4, la voiture orange sort quand la main la touche */
+    const cr = 26, mr = miniBoard($('art-run'), 4, 4, cr);
+    const rk = document.createElement('div');
+    rk.className = 'rock';
+    rk.style.cssText = 'left:0;top:' + 3 * cr + 'px;width:' + cr + 'px;height:' + cr + 'px';
+    mr.appendChild(rk);
+    miniCar(mr, cr, 3, 1, 3, false, 90, carSVG(3, '#4a90f2'));
+    miniCar(mr, cr, 0, 2, 2, true, 180, carSVG(2, '#62bf5d'));
+    miniCar(mr, cr, 2, 2, 2, false, 270, carSVG(2, '#9a6ee0'));
+    const runner = miniCar(mr, cr, 1, 0, 2, true, 0, carSVG(2, '#f27f34'), 'go-r');
+    const hr = handEl(mr, 2 * cr, cr / 2, 'tap');
+    /* vignette Casse-tête : 6 x 6, la main pousse le bouchon puis la rouge file vers la sortie */
+    const cp = 17, mp = miniBoard($('art-pz'), 6, 6, cp);
+    const ex = document.createElement('i');
+    ex.className = 'exit';
+    ex.style.cssText = 'left:' + (6 * cp - 1) + 'px;top:' + (2 * cp + 3) + 'px;height:' + (cp - 6) + 'px';
+    mp.appendChild(ex);
+    miniCar(mp, cp, 0, 0, 3, true, 0, pcarSVG(3, '#c9b38a'));
+    miniCar(mp, cp, 0, 3, 2, false, 90, pcarSVG(2, '#22b8a5'));
+    miniCar(mp, cp, 2, 5, 2, true, 0, pcarSVG(2, '#f4b81d'));
+    miniCar(mp, cp, 5, 0, 2, false, 90, pcarSVG(2, '#9a6ee0'));
+    miniCar(mp, cp, 4, 1, 2, false, 90, pcarSVG(2, '#4a90f2'), 'go-down');
+    miniCar(mp, cp, 1, 2, 2, true, 0, pcarSVG(2, PALETTE[0], true), 'go-hero');
+    const hp = handEl(mp, 4.5 * cp, 2 * cp, 'drag');
+    if (reduce) return;
+    hr.classList.remove('tap');
+    hr.animate([
+      { transform: 'translate(16px,22px)', opacity: 0, offset: 0 },
+      { transform: 'translate(16px,22px)', opacity: 1, offset: 0.12 },
+      { transform: 'translate(0,0)', opacity: 1, offset: 0.32 },
+      { transform: 'translate(0,0) scale(.86)', opacity: 1, offset: 0.4 },
+      { transform: 'translate(0,0)', opacity: 1, offset: 0.46 },
+      { transform: 'translate(10px,26px)', opacity: 0, offset: 0.6 },
+      { transform: 'translate(10px,26px)', opacity: 0, offset: 1 }
+    ], { duration: 3200, iterations: Infinity, easing: 'ease-in-out' });
+    hp.classList.remove('drag');
+    hp.animate([
+      { transform: 'translate(0,0)', opacity: 0, offset: 0 },
+      { transform: 'translate(0,0) scale(.88)', opacity: 1, offset: 0.1 },
+      { transform: 'translate(0,' + 2 * cp + 'px) scale(.88)', opacity: 1, offset: 0.3 },
+      { transform: 'translate(0,' + 2 * cp + 'px)', opacity: 0, offset: 0.38 },
+      { transform: 'translate(0,' + 2 * cp + 'px)', opacity: 0, offset: 1 }
+    ], { duration: 4200, iterations: Infinity, easing: 'ease-in-out' });
+    void runner;
+  }
+  function openHome() {
+    tutoClear();
+    hide($('levels'));
+    $('prog-run').textContent = 'Niveau ' + S.level + ' / ' + MAX;
+    const stars = Object.values(S.pz.stars || {}).reduce((a, b) => a + (b | 0), 0);
+    $('prog-pz').textContent = '★ ' + stars + ' / ' + PUZZLES.length * 3 + ' · Énigme ' + S.pz.level;
+    $('home-pz').hidden = !PUZZLES.length;
+    homeOpen = true;
+    home.classList.remove('leaving');
+    show(home);
+    buddyHome.set('cheer');
+    setTimeout(() => buddyHome.set('idle'), 1600);
+  }
+  function leaveHome(pz) {
+    homeOpen = false;
+    home.classList.add('leaving');
+    setTimeout(() => { hide(home); home.classList.remove('leaving'); }, reduce ? 0 : 280);
+    if (pz) pzStart(S.pz.level); else start(S.level);
+  }
+  buildHome();
+
   /* ---------- événements ---------- */
   board.addEventListener('click', e => {
     const b = e.target.closest('.car');
@@ -2022,6 +2524,9 @@ body.puzzle #btn-restart .lbl { display: none; }
   });
   $('btn-levels').addEventListener('click', openLevels);
   $('levels-close').addEventListener('click', () => hide($('levels')));
+  $('btn-home').addEventListener('click', openHome);
+  $('home-run').addEventListener('click', () => leaveHome(false));
+  $('home-pz').addEventListener('click', () => leaveHome(true));
   $('test-mode').addEventListener('change', e => { S.test = e.target.checked; save(); refreshGrid(); refreshPz(); });
   $('tab-run').addEventListener('click', () => showTab(false));
   $('tab-pz').addEventListener('click', () => showTab(true));
@@ -2088,7 +2593,7 @@ body.puzzle #btn-restart .lbl { display: none; }
   else window.addEventListener('resize', layout);
 
   try { window.claude && window.claude.hot && window.claude.hot.snapshot && window.claude.hot.snapshot(() => ({ level: S.level })); } catch (e) { /* ignoré */ }
-  const boot = () => (S.mode === 'puzzle' ? pzStart(S.pz.level) : start(S.level));
+  const boot = () => { openHome(); if (S.mode === 'puzzle') pzStart(S.pz.level); else start(S.level); };
   if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
   else boot();
 })();

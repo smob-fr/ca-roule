@@ -4,6 +4,7 @@ const {chromium}=require('playwright');
  const p=await b.newPage({viewport:{width:390,height:780},hasTouch:true});
  const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.goto('file://'+require('path').resolve(__dirname,'../dist/index.html')+'');await p.waitForTimeout(500);
+ await p.tap('#home-run');await p.waitForTimeout(400); // quitte l'accueil
  const vis=()=>p.evaluate(()=>!document.getElementById('levels').hidden);
  await p.tap('#btn-levels');console.log('1',await vis());
  await p.tap('#tab-pz');await p.waitForTimeout(100);

@@ -8,6 +8,7 @@ const PZ=require('../data/puzzles.json');
  const N=3;const L=PZ[N-1];
  await p.addInitScript(n=>{localStorage.setItem('caroule.v1',JSON.stringify({level:1,max:1,test:true,seen:{},mode:'puzzle',pz:{level:n,max:n,stars:{}}}))},N);
  await p.goto('file://'+require('path').resolve(__dirname,'../dist/index.html')+'');await p.waitForTimeout(500);
+ await p.click('#home-pz');await p.waitForTimeout(400); // quitte l'accueil
  const cars=L.cars.map(c=>({h:!!c[0],fixed:c[1],len:c[3]}));
  const r=E.pzSolve(cars,L.cars.map(c=>c[2]),2e6);
  const pos=L.cars.map(c=>c[2]);
