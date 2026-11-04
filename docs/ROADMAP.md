@@ -14,7 +14,7 @@
 
 ## 3. Contenu et rétention
 - ~~Sons et musique~~ : fait (Web Audio synthétisé). Piste possible : vraie musique composée en fichiers pour la version store.
-- Skins de voitures, déblocables via étoiles ou vidéos.
+- ~~Skins de voitures~~ : fait (7 styles débloqués par les étoiles). Piste : skins exclusifs via vidéo récompensée ou achat.
 - Défi du jour (graine = date), séries de jours consécutifs.
 - Plus d'énigmes Casse-tête (relancer `puzzles:search` avec d'autres graines, viser 200 niveaux), packs thématiques.
 - ~~Tutoriel plus visuel~~ : fait (main animée sur les niveaux 1-2 de chaque mode). Écran d'accueil : fait.
