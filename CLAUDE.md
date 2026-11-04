@@ -7,12 +7,15 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 - `npm run build` : assemble `dist/index.html` (template + moteur + énigmes) et vérifie la syntaxe des scripts embarqués. **Toujours relancer après une modif de `src/` ou `data/`.**
 - `npm run verify` : vérifie les 1000 niveaux du mode Course (solvabilité, déterminisme, unicité) par une simulation indépendante du moteur.
 - `npm install && npx playwright install chromium && npm run test:e2e` : tests de bout en bout (appuis tactiles, glisser des voitures, fenêtre des niveaux).
+- `npm run verify:daily` : re-résout chaque défi du jour (`data/daily.json`) et vérifie qu'il demande exactement `opt` coups (30 et plus).
+- `npm run daily:search` puis `npm run daily:select` : cherche de nouveaux défis experts (`tools/gen_daily.js`, une graine par processus) puis reconstruit `data/daily.json`. Attention : changer la liste change le défi de chaque jour.
 - `npm run screenshot` : capture d'écran du mode Casse-tête (écrit dans /tmp).
 
 ## Architecture
 - `src/engine.js` : moteur pur (UMD, sans DOM). `generate(n)` produit le niveau n du mode Course de façon déterministe (graine `n*7919+13`) ; `pzSolve` résout les énigmes par parcours en largeur (coups minimum, nombre de solutions, un chemin optimal).
 - `src/template.html` : toute l'interface (CSS + HTML + script principal). Marqueurs `/*ENGINE*/` et `/*PUZZLES*/[]` remplacés au build. Ne pas les supprimer.
 - `data/puzzles.json` : 50 énigmes `{opt, ways, cars:[[horizontale, ligne/colonne, case, longueur]]}` ; la voiture 0 est la rouge (ligne 2, sort à droite). `ways===1` = solution optimale unique.
+- `data/daily.json` : défis du jour `{opt, cars}` (même format que les énigmes), tous à 30 coups ou plus. Générés par `tools/gen_daily.js` : pour une disposition, exploration de toutes les positions atteignables puis choix de la plus éloignée de la sortie (escalade sur les dispositions). Recherches brutes dans `data/daily/`. Marqueur `/*DAILY*/[]` dans le template.
 - `data/candidates/` : ~42 000 grilles candidates trouvées par recherche (`tools/gen_puzzles.js`, escalade de colline) ; `tools/select_pz.js` en tire les 50 énigmes (échelle de difficulté, re-vérifiées par `pzSolve`).
 - `dist/index.html` : fichier généré, jamais édité à la main.
 - `docs/` : expériences de faisabilité du mode Casse-tête.
@@ -23,7 +26,7 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 
 ## Points d'attention
 - Pubs **simulées** (`runAd`, `ADS`) : à remplacer par un vrai SDK (AdMob/AppLovin) ; bannière = div « PUB ».
-- Sauvegarde : `localStorage` clé `caroule.v1` = `{level,max,test,seen,mode,pz:{level,max,stars},sfx,music,skin,rs,ads}`. Garder la compatibilité ascendante.
+- Sauvegarde : `localStorage` clé `caroule.v1` = `{level,max,test,seen,mode,pz:{level,max,stars},sfx,music,skin,rs,ads,daily}`. Garder la compatibilité ascendante.
 - Un seul thème sombre voulu (nuit violette en Course, nuit bleue en Casse-tête) ; accent jaune panneau (`--sign`, `--sign-hi`, `--sign-deep`), bleu (`--psign…`) pour le Casse-tête.
 - Style visuel « jeu mobile moderne » : dégradés doux, verre dépoli, relief léger, polices arrondies. Éviter les contours épais, les ombres dures décalées et les polices monospace (look rétro).
 - Pas de dépendance externe à part les polices Google Fonts (Fredoka pour les titres et chiffres, Nunito pour le texte).
@@ -34,6 +37,7 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 - Skins (`SKINS`, `SKIN`, `equip`) : 7 styles de voitures (Classique 0, Sport 12, Bonbon 30, Flammes 50, Commando 80, Néon 120, Or massif 180 étoiles), débloqués par le total d'étoiles (`totalStars` : Course `S.rs` + Casse-tête `S.pz.stars`), sans les dépenser. Un skin = palette (`pal[0]` = voiture rouge du Casse-tête) + décor (`deco` : stripes, dots, flames, camo) ou style de carrosserie (`style` : neon, gold), appliqués par `carSVG`/`pcarSVG`. Garage accessible depuis l'accueil ; la fenêtre de victoire annonce un nouveau style ou les étoiles qui manquent. Anciennes sauvegardes : 1 étoile comptée par niveau de Course déjà passé.
 - Skins exclusifs (`ad: N` dans `SKINS` : Taxi 2, Police 3, Galaxie 4 vidéos) : débloqués en regardant N vidéos récompensées depuis le garage (`watchFor`, progression dans `S.ads`), équipés automatiquement au déblocage.
 - Menu pendant la partie : bouton pause `#btn-menu` dans le bandeau (Échap aussi) → fenêtre `#pause` (Reprendre, Accueil, changer de mode, Niveaux, Garage, son). Le chrono est figé tant qu'elle est ouverte.
+- Défi du jour (`dailyPuzzle`, `dailyWin`, `dailyHud`) : un casse-tête expert par jour, choisi par le numéro du jour depuis le 1er janvier 2026 (date locale), identique pour tous. Lancé depuis la carte rouge de l'accueil, thème `body.daily`. Série (`S.daily` = `{last, streak, best, done}`) : +1 si le défi d'hier était réussi, sinon repart à 1 ; affichée à 0 si ni hier ni aujourd'hui ne sont réussis. Étoiles du défi comptées pour le garage. Pas de tutoriel, indices autorisés (vidéo).
 - Effets : `puff` (poussière à la sortie), `spark` (choc), `celebrate` (confettis à la victoire) ; tous coupés si `prefers-reduced-motion`.
 - Le fichier de vérification n'a jamais détecté de niveau insoluble : tout changement du générateur change les niveaux existants (déterministe par numéro) — le signaler avant de modifier `params`/`build`.
 - Bug déjà rencontré : la fenêtre « Niveaux » (`.sheet-card`) sortait de l'écran à cause de la grille de 1000 boutons ; corrigé avec `max-height: min(82vh, 680px)` et `min-height: 0` sur `.level-grid`. Garder ça en tête en touchant au CSS.

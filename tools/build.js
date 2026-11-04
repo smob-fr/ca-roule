@@ -1,9 +1,10 @@
-/* Assemble dist/index.html : src/template.html + src/engine.js + data/puzzles.json. */
+/* Assemble dist/index.html : src/template.html + src/engine.js + data/puzzles.json + data/daily.json. */
 const fs = require('fs'), path = require('path');
 const root = path.resolve(__dirname, '..');
 let t = fs.readFileSync(path.join(root, 'src/template.html'), 'utf8');
 t = t.replace('/*ENGINE*/', () => fs.readFileSync(path.join(root, 'src/engine.js'), 'utf8'));
 t = t.replace('/*PUZZLES*/[]', () => fs.readFileSync(path.join(root, 'data/puzzles.json'), 'utf8'));
+t = t.replace('/*DAILY*/[]', () => fs.readFileSync(path.join(root, 'data/daily.json'), 'utf8'));
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist/index.html'), t);
 /* verification de syntaxe des scripts embarques */

@@ -9,7 +9,10 @@
     "test:e2e": "node tests/e2e-run-touch.js && node tests/e2e-puzzle-touch.js && node tests/e2e-puzzle-mouse.js && node tests/e2e-levels-sheet.js",
     "puzzles:search": "node tools/gen_puzzles.js 1 300 25",
     "puzzles:select": "node tools/select_pz.js",
-    "screenshot": "node tools/screenshot.js"
+    "screenshot": "node tools/screenshot.js",
+    "verify:daily": "node tests/verify-daily.js",
+    "daily:search": "node tools/gen_daily.js 1 1200 30",
+    "daily:select": "node tools/select_daily.js"
   },
   "devDependencies": {
     "playwright": "^1.48.0"
