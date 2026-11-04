@@ -4,7 +4,8 @@ Jeu mobile de puzzle de parking, en français. Prototype web mono-fichier (HTML/
 Le propriétaire parle français : répondre et commenter en français, textes du jeu en français.
 
 ## Commandes
-- `npm run build` : assemble `dist/index.html` (template + moteur + énigmes) et vérifie la syntaxe des scripts embarqués. **Toujours relancer après une modif de `src/` ou `data/`.**
+- `npm run build` : assemble `dist/index.html` (template + moteur + énigmes + défis, fichier unique pour l'artefact claude.ai) et `site/` (page complète avec viewport mobile, manifeste, icônes, service worker hors ligne ; publiée par GitHub Pages, non versionnée). Vérifie la syntaxe des scripts embarqués. **Toujours relancer après une modif de `src/` ou `data/`.**
+- `node tools/make_icons.js` : regénère `assets/icons/` à partir des graphismes du jeu (après `npm run build`).
 - `npm run verify` : vérifie les 1000 niveaux du mode Course (solvabilité, déterminisme, unicité) par une simulation indépendante du moteur.
 - `npm install && npx playwright install chromium && npm run test:e2e` : tests de bout en bout (appuis tactiles, glisser des voitures, fenêtre des niveaux).
 - `npm run verify:daily` : re-résout chaque défi du jour (`data/daily.json`) et vérifie qu'il demande exactement `opt` coups (30 et plus).
@@ -18,6 +19,7 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 - `data/daily.json` : défis du jour `{opt, cars}` (même format que les énigmes), tous à 30 coups ou plus. Générés par `tools/gen_daily.js` : pour une disposition, exploration de toutes les positions atteignables puis choix de la plus éloignée de la sortie (escalade sur les dispositions). Recherches brutes dans `data/daily/`. Marqueur `/*DAILY*/[]` dans le template.
 - `data/candidates/` : ~42 000 grilles candidates trouvées par recherche (`tools/gen_puzzles.js`, escalade de colline) ; `tools/select_pz.js` en tire les 50 énigmes (échelle de difficulté, re-vérifiées par `pzSolve`).
 - `dist/index.html` : fichier généré, jamais édité à la main.
+- Publication : `.github/workflows/pages.yml` publie `site/` sur GitHub Pages à chaque envoi sur `main` (après `verify` et `verify:daily`). Le service worker charge la page depuis le réseau d'abord, donc les testeurs ont toujours la dernière version.
 - `docs/` : expériences de faisabilité du mode Casse-tête.
 
 ## Règles du jeu
