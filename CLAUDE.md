@@ -24,8 +24,11 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 ## Points d'attention
 - Pubs **simulées** (`runAd`, `ADS`) : à remplacer par un vrai SDK (AdMob/AppLovin) ; bannière = div « PUB ».
 - Sauvegarde : `localStorage` clé `caroule.v1` = `{level,max,test,seen,mode,pz:{level,max,stars}}`. Garder la compatibilité ascendante.
-- Un seul thème sombre voulu ; accent jaune panneau routier (`--sign`), bleu panneau (`--psign`) pour le Casse-tête.
-- Pas de dépendance externe à part les polices Google Fonts (Overpass).
+- Un seul thème sombre voulu (nuit violette en Course, nuit bleue en Casse-tête) ; accent jaune panneau (`--sign`, `--sign-hi`, `--sign-deep`), bleu (`--psign…`) pour le Casse-tête.
+- Style visuel « jeu mobile moderne » : dégradés doux, verre dépoli, relief léger, polices arrondies. Éviter les contours épais, les ombres dures décalées et les polices monospace (look rétro).
+- Pas de dépendance externe à part les polices Google Fonts (Fredoka pour les titres et chiffres, Nunito pour le texte).
+- Voitures dessinées en SVG (`carSVG`, `pcarSVG`, `tarpSVG`) : chaque SVG a ses propres id de dégradés (`gidSeq`), car une voiture sortie est retirée du DOM. Éclairage symétrique sur la largeur pour rester juste après rotation. Dégradés partagés des cœurs et étoiles dans le `<svg class="defs">` en haut de page (`#g-heart`, `#g-star`).
+- Effets : `puff` (poussière à la sortie), `spark` (choc), `celebrate` (confettis à la victoire) ; tous coupés si `prefers-reduced-motion`.
 - Le fichier de vérification n'a jamais détecté de niveau insoluble : tout changement du générateur change les niveaux existants (déterministe par numéro) — le signaler avant de modifier `params`/`build`.
 - Bug déjà rencontré : la fenêtre « Niveaux » (`.sheet-card`) sortait de l'écran à cause de la grille de 1000 boutons ; corrigé avec `max-height: min(82vh, 680px)` et `min-height: 0` sur `.level-grid`. Garder ça en tête en touchant au CSS.
 - Mascotte (cône de chantier) : états idle/cheer/ouch/sad, pupilles qui suivent le doigt.
