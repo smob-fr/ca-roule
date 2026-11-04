@@ -1,0 +1,29 @@
+# Feuille de route
+
+## 1. Emballer en appli (priorité)
+- Séparer `src/template.html` en `index.html` + `style.css` + modules JS (garder le build mono-fichier pour les artefacts).
+- Capacitor (iOS + Android) : `npm i @capacitor/core @capacitor/cli`, `npx cap init`, `npx cap add ios android`, dossier web = `dist/`.
+- Icônes, écran de lancement, mode plein écran, zones sûres (déjà gérées en CSS).
+- Comptes développeur Apple (99 $/an) et Google Play (25 $ une fois).
+
+## 2. Monétisation réelle
+- SDK pub : AdMob (plugin Capacitor) ; remplacer `runAd('reward'|'inter')` et la bannière.
+- Consentement RGPD (UMP de Google) et suivi (ATT sur iOS) : obligatoires en Europe.
+- Achat intégré « sans pub » (RevenueCat ou plugin natif).
+- Indices en vidéo récompensée (déjà câblés), vie supplémentaire, relance après chrono.
+
+## 3. Contenu et rétention
+- Sons et musique (Web Audio ou fichiers), retours haptiques.
+- Skins de voitures, déblocables via étoiles ou vidéos.
+- Défi du jour (graine = date), séries de jours consécutifs.
+- Plus d'énigmes Casse-tête (relancer `puzzles:search` avec d'autres graines, viser 200 niveaux), packs thématiques.
+- Tutoriel plus visuel pour le Casse-tête (le toucher simple ne fait rien : il faut glisser).
+
+## 4. Qualité
+- Analytique (niveaux abandonnés, durée, taux de vidéos regardées) pour régler la difficulté.
+- Équilibrage : tester le chrono et les pièges sur de vrais joueurs ; courbe de difficulté du Casse-tête (derniers niveaux à 46-49 coups très durs).
+- Accessibilité : mode daltonien (formes sur les voitures), réduction des animations (déjà gérée).
+- Tests automatiques en intégration continue (GitHub Actions : verify + build + e2e).
+
+## 5. Serveur (optionnel)
+- Comptes, sauvegarde en ligne, classements, défis entre amis.
