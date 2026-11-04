@@ -1429,7 +1429,30 @@ body.daily .level-chip {
 .streak-line svg { width: 26px; height: 26px; }
 .streak-line small { font-size: 12px; font-weight: 800; color: rgba(255, 230, 240, 0.8); }
 
+/* ---------- rappels ---------- */
+.notif-card { gap: 12px; }
+.notif-bell { width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, #ffc27a, #ff7a3d 55%, #e0402a); box-shadow: 0 10px 24px rgba(255, 90, 50, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.5); color: #fff; animation: ring 2.4s ease-in-out infinite; transform-origin: 50% 10%; }
+.notif-bell svg { width: 34px; height: 34px; }
+@keyframes ring { 0%, 70%, 100% { transform: rotate(0); } 75% { transform: rotate(14deg); } 80% { transform: rotate(-12deg); } 85% { transform: rotate(8deg); } 90% { transform: rotate(-4deg); } }
+.notif-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 18px; background: rgba(0, 0, 0, 0.22); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08); text-align: left; font-size: 15px; font-weight: 800; }
+.switch { position: relative; flex: none; width: 54px; height: 32px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, 0.18); cursor: pointer; transition: background 0.2s; }
+.switch::after { content: ""; position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); transition: transform 0.22s cubic-bezier(.3, 1.4, .5, 1); }
+.switch[aria-checked="true"] { background: linear-gradient(90deg, #34d58a, #1fb874); }
+.switch[aria-checked="true"]::after { transform: translateX(22px); }
+.notif-row select { flex: none; min-height: 38px; padding: 0 10px; border: 0; border-radius: 12px; background: rgba(255, 255, 255, 0.14); color: #fff; font-family: var(--font-display); font-size: 16px; font-weight: 600; }
+.notif-row select:disabled { opacity: 0.4; }
+.notif-row select option { color: #15173d; }
+.notif-preview { display: flex; gap: 10px; padding: 10px 12px; border-radius: 18px; background: rgba(245, 246, 255, 0.95); color: #1c1f3f; text-align: left; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); }
+.notif-preview .app-ico { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(180deg, #ffe27a, #ffc933 50%, #f29a00); font-family: var(--font-display); font-weight: 700; font-size: 15px; color: #4a2a00; }
+.notif-preview .txt { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.notif-preview small { font-size: 11px; font-weight: 800; color: #6b6f90; text-transform: capitalize; }
+.notif-preview b { font-size: 14px; font-weight: 900; }
+.notif-preview span { font-size: 13px; font-weight: 700; color: #3a3d5c; }
+.notif-msg { font-size: 12.5px !important; min-height: 1em; }
+#win-notif { min-height: 44px; font-size: 15px; }
+
 @media (prefers-reduced-motion: reduce) {
+  .notif-bell { animation: none; }
   .daily-card, .daily-card::after, .daily-flame svg, .streak-line { animation: none !important; }
   .garage-btn, .unlock { animation: none; }
   .tuto .tuto-hand, .tuto .tuto-ring, .tuto-target, .home-sky i, .home-road::before, .road-car, .m.go-r, .m.go-down, .m.go-hero, .home-logo, .home-tag, .mode-card { animation: none !important; }
@@ -1507,6 +1530,7 @@ body.daily .level-chip {
 <!-- Accueil -->
 <section class="home" id="home" aria-labelledby="home-title">
   <div class="home-audio">
+      <button class="icon-btn snd-btn notif-toggle off" id="home-notif" type="button" aria-label="Rappel du défi" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" fill="currentColor" fill-opacity=".9"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg></button>
       <button class="icon-btn snd-btn snd-music" id="home-music" type="button" aria-label="Musique" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 17.5V6.2a1 1 0 0 1 .76-.97l9-2.2A1 1 0 0 1 20 4v11.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.8" rx="3.2" ry="2.6"/><ellipse cx="17.5" cy="15.8" rx="3.2" ry="2.6"/></svg></button>
       <button class="icon-btn snd-btn snd-sfx" id="home-sfx" type="button" aria-label="Bruitages" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
   </div>
@@ -1565,6 +1589,7 @@ body.daily .level-chip {
     <div class="stars" id="win-stars" aria-hidden="true"></div>
     <p id="win-stat" hidden></p>
     <p class="streak-line" id="win-streak" hidden></p>
+    <button class="btn secondary" id="win-notif" type="button" hidden>🔔 Me rappeler le défi chaque jour</button>
     <div class="unlock" id="win-unlock" hidden></div>
     <button class="btn primary" id="win-next" type="button">Niveau suivant</button>
     <button class="btn secondary" id="win-retry" type="button" hidden>Rejouer pour 3 étoiles</button>
@@ -1623,9 +1648,27 @@ body.daily .level-chip {
       <button class="btn secondary" id="pause-garage" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3.5 16h17v3h-17z" fill="currentColor"/><circle cx="7.5" cy="13" r="1" fill="currentColor"/><circle cx="16.5" cy="13" r="1" fill="currentColor"/></svg>Garage</button>
     </div>
     <div class="pause-snd">
+      <button class="icon-btn snd-btn notif-toggle off" type="button" aria-label="Rappel du défi" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" fill="currentColor" fill-opacity=".9"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg>Rappel</button>
       <button class="icon-btn snd-btn snd-music" type="button" aria-label="Musique" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 17.5V6.2a1 1 0 0 1 .76-.97l9-2.2A1 1 0 0 1 20 4v11.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.8" rx="3.2" ry="2.6"/><ellipse cx="17.5" cy="15.8" rx="3.2" ry="2.6"/></svg>Musique</button>
       <button class="icon-btn snd-btn snd-sfx" type="button" aria-label="Bruitages" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Bruitages</button>
     </div>
+  </div>
+</div>
+
+<!-- Rappel du défi du jour -->
+<div class="scrim over" id="notif" hidden>
+  <div class="card notif-card" role="dialog" aria-modal="true" aria-labelledby="notif-title">
+    <div class="notif-bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" fill="currentColor" fill-opacity=".9"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg></div>
+    <h2 id="notif-title">Rappel du défi</h2>
+    <p>Une notification chaque jour pour ne jamais rater le défi ni casser votre série.</p>
+    <div class="notif-row"><span>Rappel quotidien</span><button class="switch" id="notif-switch" type="button" role="switch" aria-checked="false" aria-label="Rappel quotidien"></button></div>
+    <label class="notif-row" for="notif-time"><span>Heure du rappel</span><select id="notif-time"></select></label>
+    <div class="notif-preview" id="notif-preview" hidden>
+      <span class="app-ico" aria-hidden="true">ÇR</span>
+      <span class="txt"><small id="notif-prev-when"></small><b id="notif-prev-title"></b><span id="notif-prev-body"></span></span>
+    </div>
+    <p class="notif-msg" id="notif-msg" role="status"></p>
+    <button class="btn secondary" id="notif-close" type="button">Fermer</button>
   </div>
 </div>
 
@@ -1699,13 +1742,14 @@ body.daily .level-chip {
     sfx: saved.sfx !== false, music: saved.music !== false,
     skin: typeof saved.skin === 'string' ? saved.skin : 'classic', rs: saved.rs || {}, ads: saved.ads || {},
     daily: Object.assign({ last: '', streak: 0, best: 0, done: {} }, saved.daily),
+    notif: Object.assign({ on: false, hour: 18, minute: 0, asked: false }, saved.notif),
     seen: saved.seen || {}, rockNodes: new Map(), rocks: [], has: {},
     mode: saved.mode === 'puzzle' && PUZZLES.length ? 'puzzle' : 'run',
     pz: Object.assign({ level: 1, max: 1, stars: {} }, saved.pz),
     W: 4, H: 4, cell: 40, cars: [], byId: {}, nodes: new Map(), grid: null,
     left: 0, hearts: 3, over: false, hintId: null, sinceAd: 0, session: 0
   };
-  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily });
+  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif });
   const show = el => { el.hidden = false; };
   const hide = el => { el.hidden = true; };
   const vibrate = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignoré */ } };
@@ -2719,6 +2763,7 @@ body.daily .level-chip {
     S.sinceAd++;
     const stars = starsFor(P.moves, P.opt);
     hide($('win-streak'));
+    hide($('win-notif'));
     if (P.daily) { dailyWin(stars); return; }
     const before = totalStars();
     const key = String(P.n);
@@ -2939,6 +2984,7 @@ body.daily .level-chip {
   function win() {
     S.sinceAd++;
     hide($('win-streak'));
+    hide($('win-notif'));
     const before = totalStars();
     S.rs[S.level] = Math.max(S.rs[S.level] || 0, S.hearts);
     if (S.level >= S.max && S.level < MAX) S.max = S.level + 1;
@@ -3290,8 +3336,9 @@ body.daily .level-chip {
   const dayKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const todayKey = () => dayKey(new Date());
   const yesterdayKey = () => { const d = new Date(); d.setDate(d.getDate() - 1); return dayKey(d); };
-  function dailyPuzzle() {
-    const d = new Date(), n = Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - DAY0) / 864e5), L = DAILY.length;
+  function dailyPuzzle(d) {
+    d = d || new Date();
+    const n = Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - DAY0) / 864e5), L = DAILY.length;
     return DAILY[((n % L) + L) % L];
   }
   /* la série reste affichée tant que le défi d'hier ou d'aujourd'hui est réussi */
@@ -3343,6 +3390,11 @@ body.daily .level-chip {
     showUnlock(before);
     if (stars < 3) show($('win-retry')); else hide($('win-retry'));
     $('win-next').textContent = 'Retour à l\'accueil';
+    const wn = $('win-notif');
+    wn.disabled = false;
+    wn.textContent = '🔔 Me rappeler le défi chaque jour';
+    wn.hidden = S.notif.on || S.notif.asked || !Notif.supported() || Notif.denied();
+    Notif.sync();
     show($('win'));
     celebrate();
     Snd.win(stars);
@@ -3442,6 +3494,142 @@ body.daily .level-chip {
     }
     show(el);
   }
+
+
+  /* ---------- rappels du défi du jour ----------
+     Appli (Capacitor) : notifications locales programmées par le téléphone pour les 7 prochains jours,
+     sans serveur (plugin @capacitor/local-notifications). Reprogrammées à chaque ouverture et après chaque défi.
+     Web : l'API Notification ne peut prévenir que tant que la page est ouverte. */
+  const Notif = (function () {
+    const LN = () => window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+    const ID0 = 7100, IDLAST = 7200;
+    let webTimers = [];
+    const supported = () => !!LN() || 'Notification' in window;
+    async function permission() {
+      const ln = LN();
+      try {
+        if (ln) {
+          let p = await ln.checkPermissions();
+          if (p.display !== 'granted') p = await ln.requestPermissions();
+          return p.display === 'granted';
+        }
+        if (!('Notification' in window)) return false;
+        if (Notification.permission === 'granted') return true;
+        if (Notification.permission === 'denied') return false;
+        return (await Notification.requestPermission()) === 'granted';
+      } catch (e) { return false; }
+    }
+    const denied = () => !LN() && 'Notification' in window && Notification.permission === 'denied';
+    const TEASERS = [
+      n => 'Objectif ' + n + ' coups. Saurez-vous trouver la solution parfaite ?',
+      n => 'Un casse-tête expert de ' + n + ' coups vous attend.',
+      n => 'Nouveau parking bouché : ' + n + ' coups pour les meilleurs pilotes.',
+      n => 'Le cône a encore semé la pagaille : ' + n + ' coups pour en sortir !'
+    ];
+    /* liste des rappels à venir (dates locales) */
+    function plan() {
+      const out = [];
+      if (!S.notif.on || !DAILY.length) return out;
+      const now = new Date(), doneToday = !!S.daily.done[todayKey()];
+      for (let i = 0; i < 7; i++) {
+        const at = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, S.notif.hour, S.notif.minute);
+        const L = dailyPuzzle(at), seed = at.getDate() + at.getMonth() * 31;
+        /* série en jeu : connue aujourd'hui, et demain si le défi du jour est déjà fait */
+        const st = i === 0 ? streakNow() : i === 1 && doneToday ? S.daily.streak : 0;
+        if (at > now && !(i === 0 && doneToday)) {
+          out.push(st > 0
+            ? { id: ID0 + i, at, title: '🔥 Série de ' + plural(st, 'jour') + ' en jeu', body: 'Le défi du jour vous attend : objectif ' + L.opt + ' coups. Ne cassez pas la série !' }
+            : { id: ID0 + i, at, title: '🧩 Le défi du jour est arrivé', body: TEASERS[seed % TEASERS.length](L.opt) });
+        }
+      }
+      /* dernière chance le soir même si une série est en danger */
+      const last = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 21, 30), st = streakNow();
+      if (!doneToday && st > 0 && last > now && (S.notif.hour * 60 + S.notif.minute) < 21 * 60) {
+        out.push({ id: IDLAST, at: last, title: '⏰ Dernière chance !', body: 'Plus que 2 h 30 pour sauver votre série de ' + plural(st, 'jour') + '.' });
+      }
+      return out;
+    }
+    async function sync() {
+      const list = plan(), ln = LN();
+      if (ln) {
+        try {
+          const pend = await ln.getPending();
+          const old = (pend.notifications || []).filter(n => n.id >= ID0 && n.id <= IDLAST).map(n => ({ id: n.id }));
+          if (old.length) await ln.cancel({ notifications: old });
+          if (list.length) {
+            await ln.schedule({ notifications: list.map(n => ({ id: n.id, title: n.title, body: n.body, schedule: { at: n.at, allowWhileIdle: true }, extra: { daily: 1 } })) });
+          }
+        } catch (e) { /* plugin indisponible : on ignore */ }
+        return;
+      }
+      webTimers.forEach(clearTimeout);
+      webTimers = [];
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      for (const n of list) {
+        const ms = n.at - Date.now();
+        if (ms > 0 && ms < 2147483647) {
+          webTimers.push(setTimeout(() => {
+            if (S.daily.done[todayKey()]) return;
+            try { new Notification(n.title, { body: n.body, tag: 'caroule-daily' }); } catch (e) { /* ignoré */ }
+          }, ms));
+        }
+      }
+    }
+    /* toucher la notification ouvre directement le défi */
+    try {
+      const ln = LN();
+      if (ln && ln.addListener) ln.addListener('localNotificationActionPerformed', () => { if (DAILY.length) leaveHome(true, true); });
+    } catch (e) { /* ignoré */ }
+    return { supported, permission, denied, plan, sync, native: () => !!LN() };
+  })();
+
+  const HOURS = [[8, 0], [12, 30], [17, 0], [18, 0], [19, 0], [20, 0], [21, 0]];
+  const hm = (h, m) => h + ' h' + (m ? ' ' + String(m).padStart(2, '0') : '');
+  function renderNotif(msg) {
+    const on = S.notif.on;
+    $('notif-switch').setAttribute('aria-checked', String(on));
+    $('notif-time').value = S.notif.hour + ':' + S.notif.minute;
+    $('notif-time').disabled = !on;
+    const next = Notif.plan()[0];
+    $('notif-preview').hidden = !next;
+    if (next) {
+      $('notif-prev-when').textContent = next.at.toLocaleDateString('fr-FR', { weekday: 'long' }) + ' · ' + hm(next.at.getHours(), next.at.getMinutes());
+      $('notif-prev-title').textContent = next.title;
+      $('notif-prev-body').textContent = next.body;
+    }
+    $('notif-msg').textContent = msg || (Notif.denied() ? 'Les notifications sont bloquées : autorisez-les dans les réglages du navigateur ou du téléphone.' :
+      !Notif.supported() ? 'Les notifications ne sont pas disponibles sur cet appareil.' :
+      Notif.native() ? '' : 'Version web : le rappel ne s\'affiche que si le jeu est ouvert. Dans l\'appli, il arrivera même jeu fermé.');
+    document.querySelectorAll('.notif-toggle').forEach(b => { b.classList.toggle('off', !on); b.setAttribute('aria-pressed', String(on)); });
+  }
+  async function setNotif(on) {
+    S.notif.asked = true;
+    if (on && !(await Notif.permission())) { S.notif.on = false; save(); renderNotif(); return false; }
+    S.notif.on = on;
+    save();
+    await Notif.sync();
+    renderNotif(on ? 'C\'est noté ! Rappel tous les jours à ' + hm(S.notif.hour, S.notif.minute) + '.' : '');
+    return on;
+  }
+  function openNotif() { renderNotif(); show($('notif')); }
+  $('notif-time').innerHTML = HOURS.map(([h, m]) => '<option value="' + h + ':' + m + '">' + hm(h, m) + '</option>').join('');
+  $('notif-switch').addEventListener('click', () => setNotif(!S.notif.on));
+  $('notif-time').addEventListener('change', e => {
+    const [h, m] = e.target.value.split(':').map(Number);
+    S.notif.hour = h; S.notif.minute = m;
+    save();
+    Notif.sync();
+    renderNotif();
+  });
+  $('notif-close').addEventListener('click', () => hide($('notif')));
+  document.querySelectorAll('.notif-toggle').forEach(b => b.addEventListener('click', openNotif));
+  $('win-notif').addEventListener('click', async () => {
+    const ok = await setNotif(true);
+    $('win-notif').textContent = ok ? '🔔 Rappel activé à ' + hm(S.notif.hour, S.notif.minute) : 'Notifications refusées';
+    $('win-notif').disabled = true;
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) Notif.sync(); });
+  renderNotif();
 
   /* ---------- événements ---------- */
   board.addEventListener('click', e => {
@@ -3555,6 +3743,7 @@ body.daily .level-chip {
     if (!$('ad').hidden && !$('ad-close').disabled) closeAd();
     else if (!$('levels').hidden) hide($('levels'));
     else if (!$('garage').hidden) hide($('garage'));
+    else if (!$('notif').hidden) hide($('notif'));
     else if (!$('pause').hidden) closePause();
     else if ($('home').hidden && $('win').hidden && $('lose').hidden) openPause();
   });
@@ -3563,7 +3752,7 @@ body.daily .level-chip {
   else window.addEventListener('resize', layout);
 
   try { window.claude && window.claude.hot && window.claude.hot.snapshot && window.claude.hot.snapshot(() => ({ level: S.level })); } catch (e) { /* ignoré */ }
-  const boot = () => { openHome(); if (S.mode === 'puzzle') pzStart(S.pz.level); else start(S.level); };
+  const boot = () => { openHome(); if (S.mode === 'puzzle') pzStart(S.pz.level); else start(S.level); Notif.sync(); };
   if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
   else boot();
 })();

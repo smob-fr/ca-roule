@@ -26,7 +26,7 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 
 ## Points d'attention
 - Pubs **simulées** (`runAd`, `ADS`) : à remplacer par un vrai SDK (AdMob/AppLovin) ; bannière = div « PUB ».
-- Sauvegarde : `localStorage` clé `caroule.v1` = `{level,max,test,seen,mode,pz:{level,max,stars},sfx,music,skin,rs,ads,daily}`. Garder la compatibilité ascendante.
+- Sauvegarde : `localStorage` clé `caroule.v1` = `{level,max,test,seen,mode,pz:{level,max,stars},sfx,music,skin,rs,ads,daily,notif}`. Garder la compatibilité ascendante.
 - Un seul thème sombre voulu (nuit violette en Course, nuit bleue en Casse-tête) ; accent jaune panneau (`--sign`, `--sign-hi`, `--sign-deep`), bleu (`--psign…`) pour le Casse-tête.
 - Style visuel « jeu mobile moderne » : dégradés doux, verre dépoli, relief léger, polices arrondies. Éviter les contours épais, les ombres dures décalées et les polices monospace (look rétro).
 - Pas de dépendance externe à part les polices Google Fonts (Fredoka pour les titres et chiffres, Nunito pour le texte).
@@ -38,6 +38,7 @@ Le propriétaire parle français : répondre et commenter en français, textes d
 - Skins exclusifs (`ad: N` dans `SKINS` : Taxi 2, Police 3, Galaxie 4 vidéos) : débloqués en regardant N vidéos récompensées depuis le garage (`watchFor`, progression dans `S.ads`), équipés automatiquement au déblocage.
 - Menu pendant la partie : bouton pause `#btn-menu` dans le bandeau (Échap aussi) → fenêtre `#pause` (Reprendre, Accueil, changer de mode, Niveaux, Garage, son). Le chrono est figé tant qu'elle est ouverte.
 - Défi du jour (`dailyPuzzle`, `dailyWin`, `dailyHud`) : un casse-tête expert par jour, choisi par le numéro du jour depuis le 1er janvier 2026 (date locale), identique pour tous. Lancé depuis la carte rouge de l'accueil, thème `body.daily`. Série (`S.daily` = `{last, streak, best, done}`) : +1 si le défi d'hier était réussi, sinon repart à 1 ; affichée à 0 si ni hier ni aujourd'hui ne sont réussis. Étoiles du défi comptées pour le garage. Pas de tutoriel, indices autorisés (vidéo).
+- Rappels du défi (`Notif`, `setNotif`, fenêtre `#notif`, cloche sur l'accueil et dans la pause) : réglage `S.notif` = `{on, hour, minute, asked}` (18 h par défaut). Dans l'appli : plugin Capacitor `@capacitor/local-notifications` (`window.Capacitor.Plugins.LocalNotifications`), 7 jours de rappels programmés à l'avance (id 7100-7106) + « dernière chance » à 21 h 30 si une série est en danger (id 7200), reprogrammés à chaque ouverture, retour au premier plan et défi réussi ; toucher la notification ouvre le défi. Sur le web : API Notification, seulement tant que la page est ouverte. L'autorisation est demandée au bon moment : bouton « Me rappeler » après le premier défi réussi, ou dans la fenêtre de réglage.
 - Effets : `puff` (poussière à la sortie), `spark` (choc), `celebrate` (confettis à la victoire) ; tous coupés si `prefers-reduced-motion`.
 - Le fichier de vérification n'a jamais détecté de niveau insoluble : tout changement du générateur change les niveaux existants (déterministe par numéro) — le signaler avant de modifier `params`/`build`.
 - Bug déjà rencontré : la fenêtre « Niveaux » (`.sheet-card`) sortait de l'écran à cause de la grille de 1000 boutons ; corrigé avec `max-height: min(82vh, 680px)` et `min-height: 0` sur `.level-grid`. Garder ça en tête en touchant au CSS.
