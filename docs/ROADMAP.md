@@ -13,7 +13,7 @@
 - Indices en vidéo récompensée (déjà câblés), vie supplémentaire, relance après chrono.
 
 ## 3. Contenu et rétention
-- Sons et musique (Web Audio ou fichiers), retours haptiques.
+- ~~Sons et musique~~ : fait (Web Audio synthétisé). Piste possible : vraie musique composée en fichiers pour la version store.
 - Skins de voitures, déblocables via étoiles ou vidéos.
 - Défi du jour (graine = date), séries de jours consécutifs.
 - Plus d'énigmes Casse-tête (relancer `puzzles:search` avec d'autres graines, viser 200 niveaux), packs thématiques.
