@@ -2270,8 +2270,8 @@ body.daily .level-chip {
      Événements : session_start, level_start, level_win, level_fail, level_quit, hint_used, ad_shown, ad_closed,
      skin_equip, reminder_set, setting_change, home_choice. Envoi groupé (fetch), et sendBeacon à la fermeture. */
   const STATS_HOST = 'https://eu.i.posthog.com';
-  const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "";
-  const BUILD = "2026-11-05-54919ab";
+  const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "phc_tYQQxGun3aD3jRuJY8dvLmE2STkP62vTh5jNDJuQ4kXr";
+  const BUILD = "2026-11-05-0f3922b";
   const Stats = (function () {
     let queue = [], timer = null, A = null;
     if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
