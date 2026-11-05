@@ -5,12 +5,18 @@ let t = fs.readFileSync(path.join(root, 'src/template.html'), 'utf8');
 t = t.replace('/*ENGINE*/', () => fs.readFileSync(path.join(root, 'src/engine.js'), 'utf8'));
 t = t.replace('/*PUZZLES*/[]', () => fs.readFileSync(path.join(root, 'data/puzzles.json'), 'utf8'));
 t = t.replace('/*DAILY*/[]', () => fs.readFileSync(path.join(root, 'data/daily.json'), 'utf8'));
+/* clé publique PostHog (phc_…) : variable d'environnement POSTHOG_KEY, sinon stats.config.json ; vide = statistiques désactivées */
+let statsKey = process.env.POSTHOG_KEY || '';
+try { if (!statsKey) statsKey = JSON.parse(fs.readFileSync(path.join(root, 'stats.config.json'), 'utf8')).posthogKey || ''; } catch (e) { /* pas de configuration */ }
+if (statsKey && !/^phc_[A-Za-z0-9]+$/.test(statsKey)) { console.error('Clé PostHog invalide'); process.exit(1); }
+t = t.replace("/*STATS_KEY*/''", () => JSON.stringify(statsKey));
+t = t.replace("/*BUILD*/'dev'", () => JSON.stringify(new Date().toISOString().slice(0, 10) + '-' + require('crypto').createHash('sha1').update(t).digest('hex').slice(0, 7)));
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist/index.html'), t);
 /* verification de syntaxe des scripts embarques */
 const scripts = [...t.matchAll(/<script>([\s\S]*?)<\/script>/g)];
 scripts.forEach((m, i) => { try { new Function(m[1]); } catch (e) { console.error('Erreur de syntaxe script', i, e.message); process.exit(1); } });
-console.log('dist/index.html', t.length, 'octets,', scripts.length, 'scripts OK');
+console.log('dist/index.html', t.length, 'octets,', scripts.length, 'scripts OK', statsKey ? '(statistiques activées)' : '(statistiques désactivées : pas de clé)');
 
 /* ---------- site/ : version web installable (GitHub Pages) ----------
    Page complète (doctype, viewport mobile), manifeste d'appli, icônes et service worker hors ligne.

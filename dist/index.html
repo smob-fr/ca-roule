@@ -1110,6 +1110,8 @@ body.puzzle #btn-restart .lbl { display: none; }
 @keyframes miniHero { 0%, 34% { transform: translateX(0); opacity: 1; } 56% { transform: translateX(calc(var(--c) * 5)); opacity: 1; } 60% { opacity: 0; } 86% { transform: translateX(0); opacity: 0; } 96%, 100% { opacity: 1; } }
 .home-foot { flex: none; margin: 0; text-align: center; font-size: 12px; font-weight: 800; color: rgba(222, 226, 255, 0.5); }
 .sheet-tools { display: flex; gap: 8px; }
+.stats-row { padding: 10px 14px; font-size: 14px; }
+.stats-row small { display: block; margin-top: 2px; font-size: 11.5px; font-weight: 700; color: var(--ink-dim); }
 .home-audio { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); z-index: 5; display: flex; gap: 8px; }
 .snd-btn { position: relative; }
 .snd-btn svg { width: 20px; height: 20px; transition: opacity 0.15s; }
@@ -1577,7 +1579,7 @@ body.daily .level-chip {
     <span class="garage-txt"><b>Garage</b><small id="garage-hint"></small></span>
     <span class="star-chip" id="home-stars"></span>
   </button>
-  <p class="home-foot">1000 niveaux · 50 énigmes</p>
+  <p class="home-foot">1000 niveaux · 50 énigmes<span id="stats-note"> · statistiques anonymes (désactivables dans le menu)</span></p>
 </section>
 
 <!-- Niveau gagné -->
@@ -1647,6 +1649,7 @@ body.daily .level-chip {
       <button class="btn secondary" id="pause-levels" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Niveaux</button>
       <button class="btn secondary" id="pause-garage" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5"/><path d="M3.5 16h17v3h-17z" fill="currentColor"/><circle cx="7.5" cy="13" r="1" fill="currentColor"/><circle cx="16.5" cy="13" r="1" fill="currentColor"/></svg>Garage</button>
     </div>
+    <div class="notif-row stats-row"><span>Statistiques anonymes<small>Aident à régler la difficulté. Aucune donnée personnelle.</small></span><button class="switch" id="stats-switch" type="button" role="switch" aria-checked="true" aria-label="Statistiques anonymes"></button></div>
     <div class="pause-snd">
       <button class="icon-btn snd-btn notif-toggle off" type="button" aria-label="Rappel du défi" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" fill="currentColor" fill-opacity=".9"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg>Rappel</button>
       <button class="icon-btn snd-btn snd-music" type="button" aria-label="Musique" aria-pressed="true"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 17.5V6.2a1 1 0 0 1 .76-.97l9-2.2A1 1 0 0 1 20 4v11.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="6.5" cy="17.8" rx="3.2" ry="2.6"/><ellipse cx="17.5" cy="15.8" rx="3.2" ry="2.6"/></svg>Musique</button>
@@ -2009,13 +2012,14 @@ body.daily .level-chip {
     skin: typeof saved.skin === 'string' ? saved.skin : 'classic', rs: saved.rs || {}, ads: saved.ads || {},
     daily: Object.assign({ last: '', streak: 0, best: 0, done: {} }, saved.daily),
     notif: Object.assign({ on: false, hour: 18, minute: 0, asked: false }, saved.notif),
+    uid: saved.uid || '', stats: saved.stats !== false,
     seen: saved.seen || {}, rockNodes: new Map(), rocks: [], has: {},
     mode: saved.mode === 'puzzle' && PUZZLES.length ? 'puzzle' : 'run',
     pz: Object.assign({ level: 1, max: 1, stars: {} }, saved.pz),
     W: 4, H: 4, cell: 40, cars: [], byId: {}, nodes: new Map(), grid: null,
     left: 0, hearts: 3, over: false, hintId: null, sinceAd: 0, session: 0
   };
-  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif });
+  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif, uid: S.uid, stats: S.stats });
   const show = el => { el.hidden = false; };
   const hide = el => { el.hidden = true; };
   const vibrate = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignoré */ } };
@@ -2259,6 +2263,77 @@ body.daily .level-chip {
   })();
   ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => Snd.unlock(), { capture: true, passive: true }));
   document.addEventListener('visibilitychange', () => Snd.visibility());
+
+  /* ---------- statistiques anonymes (PostHog, hébergement UE) ----------
+     Aucune donnée personnelle : un identifiant aléatoire par appareil, pas de cookie, pas de script externe.
+     Désactivées tant que STATS_KEY est vide, et désactivables par le joueur (S.stats).
+     Événements : session_start, level_start, level_win, level_fail, level_quit, hint_used, ad_shown, ad_closed,
+     skin_equip, reminder_set, setting_change, home_choice. Envoi groupé (fetch), et sendBeacon à la fermeture. */
+  const STATS_HOST = 'https://eu.i.posthog.com';
+  const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "";
+  const BUILD = "2026-11-05-54919ab";
+  const Stats = (function () {
+    let queue = [], timer = null, A = null;
+    if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
+    const on = () => !!STATS_KEY && S.stats !== false;
+    const standalone = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } };
+    const base = () => ({
+      distinct_id: S.uid, $process_person_profile: false, build: BUILD,
+      platform: window.Capacitor ? 'app' : standalone() ? 'web-installed' : 'web',
+      lang: navigator.language, sw: screen.width, sh: screen.height
+    });
+    function send(beacon) {
+      clearTimeout(timer); timer = null;
+      if (!queue.length) return;
+      const body = JSON.stringify({ api_key: STATS_KEY, batch: queue.splice(0) });
+      try {
+        if (beacon && navigator.sendBeacon && navigator.sendBeacon(STATS_HOST + '/batch/', new Blob([body], { type: 'text/plain' }))) return;
+        fetch(STATS_HOST + '/batch/', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(() => {});
+      } catch (e) { /* réseau indisponible : tant pis */ }
+    }
+    function track(event, props) {
+      if (!on()) return;
+      queue.push({ event, timestamp: new Date().toISOString(), properties: Object.assign(base(), props) });
+      if (queue.length >= 20) send(); else if (!timer) timer = setTimeout(send, 8000);
+    }
+    /* tentative de niveau en cours : gardée en stockage pour compter aussi les abandons par fermeture de l'appli */
+    const ATT = 'caroule.att';
+    const keep = () => { try { if (A) localStorage.setItem(ATT, JSON.stringify(A)); else localStorage.removeItem(ATT); } catch (e) { /* ignoré */ } };
+    const dur = () => (A ? A.acc + (A.t0 ? Date.now() - A.t0 : 0) : 0);
+    const info = () => ({ mode: A.mode, level: A.level, ms: dur(), bumps: A.bumps, hints: A.hints, undos: A.undos, revives: A.revives, fails: A.fails, opt: A.opt });
+    function quit(reason, beacon) {
+      if (!A) return;
+      track('level_quit', Object.assign(info(), { reason }));
+      A = null; keep();
+      if (beacon) send(true);
+    }
+    /* reprise : une tentative restée ouverte à la dernière session a été abandonnée en fermant le jeu */
+    try {
+      const old = JSON.parse(localStorage.getItem(ATT) || 'null');
+      if (old) { A = old; A.t0 = 0; quit('closed'); }
+    } catch (e) { /* ignoré */ }
+    document.addEventListener('visibilitychange', () => {
+      if (A) { if (document.hidden) { A.acc = dur(); A.t0 = 0; keep(); } else A.t0 = Date.now(); }
+      if (document.hidden) send(true);
+    });
+    window.addEventListener('pagehide', () => { if (A) { A.acc = dur(); A.t0 = 0; keep(); } send(true); });
+    return {
+      track,
+      begin(mode, level, extra) {
+        if (A) quit(A.mode === mode && A.level === level ? 'restart' : 'switch');
+        A = Object.assign({ mode, level, t0: Date.now(), acc: 0, bumps: 0, hints: 0, undos: 0, revives: 0, fails: 0, opt: 0 }, extra);
+        keep();
+        track('level_start', { mode, level, opt: A.opt, timed: !!A.timed });
+      },
+      count(k) { if (A) { A[k] = (A[k] || 0) + 1; keep(); } },
+      win(props) { if (!A) return; track('level_win', Object.assign(info(), props)); A = null; keep(); },
+      fail(props) { if (!A) return; A.fails++; keep(); track('level_fail', Object.assign(info(), props)); },
+      leave(reason) { quit(reason); },
+      current: () => (A ? A.mode : null),
+      flush: () => send()
+    };
+  })();
+
   /* petit « pop » sur tous les boutons de l'interface (pas sur les voitures) */
   document.addEventListener('click', e => {
     if (e.target.closest('.btn, .icon-btn, .lv, .seg button, .mode-card, .level-chip')) Snd.click();
@@ -2799,6 +2874,7 @@ body.daily .level-chip {
     setTip();
     hud();
     layout();
+    if (!homeOpen) Stats.begin('run', S.level, { cars: S.cars.length, timed: !!S.timeTotal, rocks: S.rocks.length });
     if (!reduce) board.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220 });
   }
 
@@ -2998,6 +3074,7 @@ body.daily .level-chip {
     pzBuild();
     pzHud();
     pzLayout();
+    if (!homeOpen) Stats.begin(P.daily ? 'daily' : 'puzzle', P.daily ? todayKey() : n, { opt: P.opt, cars: P.cars.length });
     if (!reduce) board.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220 });
   }
 
@@ -3030,6 +3107,7 @@ body.daily .level-chip {
     const stars = starsFor(P.moves, P.opt);
     hide($('win-streak'));
     hide($('win-notif'));
+    Stats.win({ stars, moves: P.moves, streak: P.daily ? (S.daily.last === todayKey() ? S.daily.streak : S.daily.last === yesterdayKey() ? S.daily.streak + 1 : 1) : null });
     if (P.daily) { dailyWin(stars); return; }
     const before = totalStars();
     const key = String(P.n);
@@ -3053,6 +3131,7 @@ body.daily .level-chip {
 
   function pzUndo() {
     if (P.done || !P.hist.length) return;
+    Stats.count('undos');
     const m = P.hist.pop();
     pzClearHint();
     P.pos[m.j] = m.from;
@@ -3066,6 +3145,7 @@ body.daily .level-chip {
 
   function pzHint() {
     if (P.done) return;
+    adNext = 'hint';
     runAd('reward', ADS.rewardedSeconds, () => {
       const r = E.pzSolve(P.cars.map(c => ({ h: c.h, fixed: c.fixed, len: c.len })), P.pos, 800000);
       if (!r || !r.path || !r.path.length) { say('Je sèche…', 1600); return; }
@@ -3079,6 +3159,8 @@ body.daily .level-chip {
       P.nodes[step.car].classList.add('hint');
       say('Essayez ça !', 2000);
       Snd.chime();
+      Stats.count('hints');
+      Stats.track('hint_used', { mode: P.daily ? 'daily' : 'puzzle', level: P.daily ? todayKey() : P.n, moves: P.moves });
     });
   }
 
@@ -3236,6 +3318,7 @@ body.daily .level-chip {
     }
     vibrate(25);
     Snd.bump();
+    Stats.count('bumps');
     mood('ouch', pick(BUMP_LINES), 750);
     S.hearts--;
     hud();
@@ -3253,6 +3336,7 @@ body.daily .level-chip {
     hide($('win-notif'));
     const before = totalStars();
     S.rs[S.level] = Math.max(S.rs[S.level] || 0, S.hearts);
+    Stats.win({ stars: S.hearts, hearts: S.hearts, time_left: S.timeTotal ? Math.round(S.timeLeft) : null });
     if (S.level >= S.max && S.level < MAX) S.max = S.level + 1;
     save();
     $('win-title').textContent = S.cheerLine || (S.hearts === 3 ? 'Parfait !' : 'Dégagé !');
@@ -3270,6 +3354,7 @@ body.daily .level-chip {
   }
 
   function lose() {
+    Stats.fail({ reason: S.loseReason, cars_left: S.left });
     const time = S.loseReason === 'time';
     $('lose-title').textContent = time ? 'Temps écoulé !' : 'Carambolage !';
     $('lose-text').textContent = time
@@ -3299,8 +3384,10 @@ body.daily .level-chip {
 
   /* ---------- pubs simulées ---------- */
   let adTimer = null, adCb = null, adDone = false, adKind = 'reward';
-  function runAd(kind, seconds, cb) {
-    adKind = kind; adCb = cb; adDone = false;
+  let adPlace = '', adNext = '';
+  function runAd(kind, seconds, cb, place) {
+    adKind = kind; adCb = cb; adDone = false; adPlace = place || adNext || kind; adNext = '';
+    Stats.track('ad_shown', { kind, place: adPlace });
     Snd.duck(true);
     const close = $('ad-close');
     $('ad-kind').textContent = kind === 'reward' ? 'Vidéo récompensée · exemple' : 'Publicité · exemple';
@@ -3330,6 +3417,7 @@ body.daily .level-chip {
   }
   function closeAd() {
     clearInterval(adTimer);
+    Stats.track('ad_closed', { kind: adKind, place: adPlace, completed: adDone });
     Snd.duck(false);
     hide($('ad'));
     const cb = adCb, done = adDone;
@@ -3573,6 +3661,7 @@ body.daily .level-chip {
     void runner;
   }
   function openHome() {
+    if (Stats.current()) Stats.leave('home');
     tutoClear();
     hide($('levels'));
     $('prog-run').textContent = 'Niveau ' + S.level + ' / ' + MAX;
@@ -3590,6 +3679,7 @@ body.daily .level-chip {
   }
   function leaveHome(pz, daily) {
     homeOpen = false;
+    Stats.track('home_choice', { mode: daily ? 'daily' : pz ? 'puzzle' : 'run' });
     home.classList.add('leaving');
     setTimeout(() => { hide(home); home.classList.remove('leaving'); }, reduce ? 0 : 280);
     if (daily) pzStart(0, true); else if (pz) pzStart(S.pz.level); else start(S.level);
@@ -3710,6 +3800,7 @@ body.daily .level-chip {
   }
   /* skin exclusif : chaque vidéo regardée jusqu'au bout fait avancer le déblocage */
   function watchFor(k) {
+    adNext = 'skin_' + k.id;
     runAd('reward', ADS.rewardedSeconds, () => {
       S.ads[k.id] = Math.min(k.ad, (S.ads[k.id] || 0) + 1);
       save();
@@ -3729,6 +3820,7 @@ body.daily .level-chip {
   function equip(id) {
     const k = skinById(id);
     if (!isOpen(k)) return;
+    if (k.id !== S.skin) Stats.track('skin_equip', { skin: k.id, exclusive: isExclusive(k), stars: totalStars() });
     S.skin = k.id;
     SKIN = k;
     save();
@@ -3873,6 +3965,7 @@ body.daily .level-chip {
     if (on && !(await Notif.permission())) { S.notif.on = false; save(); renderNotif(); return false; }
     S.notif.on = on;
     save();
+    Stats.track('reminder_set', { on, hour: S.notif.hour, minute: S.notif.minute });
     await Notif.sync();
     renderNotif(on ? 'C\'est noté ! Rappel tous les jours à ' + hm(S.notif.hour, S.notif.minute) + '.' : '');
     return on;
@@ -3917,6 +4010,19 @@ body.daily .level-chip {
   }
   function closePause() { hide($('pause')); tutoLater(150); }
   $('btn-menu').addEventListener('click', openPause);
+  function renderStatsSwitch() {
+    $('stats-switch').setAttribute('aria-checked', String(S.stats !== false));
+    $('stats-switch').closest('.stats-row').hidden = !STATS_KEY;
+    $('stats-note').hidden = !STATS_KEY || S.stats === false;
+  }
+  $('stats-switch').addEventListener('click', () => {
+    if (S.stats !== false) Stats.track('setting_change', { stats: false });
+    S.stats = S.stats === false;
+    save();
+    if (S.stats) Stats.track('setting_change', { stats: true });
+    renderStatsSwitch();
+  });
+  renderStatsSwitch();
   $('pause-resume').addEventListener('click', closePause);
   $('pause-home').addEventListener('click', () => { hide($('pause')); openHome(); });
   $('pause-switch').addEventListener('click', () => { hide($('pause')); if (S.mode === 'puzzle') start(S.level); else pzStart(S.pz.level); });
@@ -3940,8 +4046,8 @@ body.daily .level-chip {
     document.querySelectorAll('.snd-music').forEach(b => { b.classList.toggle('off', !S.music); b.setAttribute('aria-pressed', String(S.music)); });
     document.querySelectorAll('.snd-sfx').forEach(b => { b.classList.toggle('off', !S.sfx); b.setAttribute('aria-pressed', String(S.sfx)); });
   }
-  document.querySelectorAll('.snd-music').forEach(b => b.addEventListener('click', () => { Snd.setMusic(!S.music); save(); renderSnd(); }));
-  document.querySelectorAll('.snd-sfx').forEach(b => b.addEventListener('click', () => { Snd.setSfx(!S.sfx); save(); renderSnd(); if (S.sfx) Snd.click(); }));
+  document.querySelectorAll('.snd-music').forEach(b => b.addEventListener('click', () => { Snd.setMusic(!S.music); save(); renderSnd(); Stats.track('setting_change', { music: S.music }); }));
+  document.querySelectorAll('.snd-sfx').forEach(b => b.addEventListener('click', () => { Snd.setSfx(!S.sfx); save(); renderSnd(); if (S.sfx) Snd.click(); Stats.track('setting_change', { sfx: S.sfx }); }));
   renderSnd();
   $('home-run').addEventListener('click', () => leaveHome(false));
   $('home-pz').addEventListener('click', () => leaveHome(true));
@@ -3967,6 +4073,7 @@ body.daily .level-chip {
   $('btn-hint').addEventListener('click', () => {
     if (S.mode === 'puzzle') { pzHint(); return; }
     if (S.over) return;
+    adNext = 'hint';
     runAd('reward', ADS.rewardedSeconds, () => {
       const id = pickHint();
       if (id == null) return;
@@ -3974,11 +4081,14 @@ body.daily .level-chip {
       S.hintId = id;
       S.nodes.get(id).classList.add('hint');
       Snd.chime();
+      Stats.count('hints');
+      Stats.track('hint_used', { mode: 'run', level: S.level, cars_left: S.left });
       reveal(S.byId[id]);
     });
   });
   $('lose-retry').addEventListener('click', () => start(S.level));
   $('lose-revive').addEventListener('click', () => {
+    adNext = S.loseReason === 'time' ? 'revive_time' : 'revive_hearts';
     runAd('reward', ADS.rewardedSeconds, () => {
       hide($('lose'));
       buddyLose.set('idle');
@@ -3988,6 +4098,7 @@ body.daily .level-chip {
         S.timeLeft = 10000;
         drawTimer();
       } else S.hearts = 2;
+      Stats.count('revives');
       S.over = false;
       hud();
     });
@@ -4018,7 +4129,10 @@ body.daily .level-chip {
   else window.addEventListener('resize', layout);
 
   try { window.claude && window.claude.hot && window.claude.hot.snapshot && window.claude.hot.snapshot(() => ({ level: S.level })); } catch (e) { /* ignoré */ }
-  const boot = () => { openHome(); if (S.mode === 'puzzle') pzStart(S.pz.level); else start(S.level); Notif.sync(); };
+  const boot = () => {
+    Stats.track('session_start', { level: S.level, max: S.max, pz_level: S.pz.max, stars: totalStars(), streak: streakNow(), skin: S.skin, music: S.music, sfx: S.sfx, reminder: S.notif.on, returning: S.max > 1 || S.pz.max > 1 });
+    openHome(); if (S.mode === 'puzzle') pzStart(S.pz.level); else start(S.level); Notif.sync();
+  };
   if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot);
   else boot();
 })();
