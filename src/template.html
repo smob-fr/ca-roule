@@ -2009,7 +2009,8 @@ body.daily .level-chip {
   const Stats = (function () {
     let queue = [], timer = null, A = null;
     if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
-    const on = () => !!STATS_KEY && S.stats !== false;
+    /* navigator.webdriver : navigateur piloté par les tests automatiques, on n'envoie rien */
+    const on = () => !!STATS_KEY && S.stats !== false && (!navigator.webdriver || !!window.CAROULE_STATS);
     const standalone = () => { try { return matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; } };
     const base = () => ({
       distinct_id: S.uid, $process_person_profile: false, build: BUILD,
