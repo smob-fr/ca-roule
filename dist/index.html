@@ -1453,7 +1453,38 @@ body.daily .level-chip {
 .notif-msg { font-size: 12.5px !important; min-height: 1em; }
 #win-notif { min-height: 44px; font-size: 15px; }
 
+/* ---------- coups de pouce ---------- */
+.badge.thumb::before { display: none; }
+.badge.thumb { font-size: 12px; letter-spacing: 0; }
+.aid-card { gap: 12px; }
+.aid-card .eyebrow b { font-size: 14px; }
+.aid-list { display: flex; flex-direction: column; gap: 8px; }
+.aid-opt { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; border: 0; border-radius: 18px; cursor: pointer; text-align: left; color: #fff; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); transition: transform 0.12s; }
+.aid-opt:active:not(:disabled) { transform: scale(0.97); }
+.aid-opt:disabled { opacity: 0.45; cursor: default; }
+.aid-opt.video { background: linear-gradient(135deg, rgba(255, 201, 51, 0.24), rgba(255, 140, 0, 0.1)); box-shadow: inset 0 0 0 1px rgba(255, 201, 51, 0.45); }
+.aid-ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: rgba(0, 0, 0, 0.22); }
+.aid-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.aid-txt b { font-family: var(--font-display); font-size: 17px; font-weight: 600; }
+.aid-txt span { font-size: 12.5px; color: var(--ink-dim); }
+.aid-txt .aid-miss { color: #ff9aab; font-weight: 900; }
+.aid-txt .aid-miss:empty { display: none; }
+.aid-cost { flex: none; padding: 6px 10px; border-radius: 999px; background: rgba(255, 201, 51, 0.18); color: var(--sign-hi); font-family: var(--font-display); font-size: 15px; font-weight: 600; white-space: nowrap; }
+.aid-cost.badge { font-family: var(--font-mono); font-size: 10px; }
+.aid-note { font-size: 12.5px !important; }
+.plan-step { position: absolute; z-index: 2; box-sizing: border-box; pointer-events: none; border: 3px dashed rgba(255, 255, 255, 0.55); border-radius: 16px; background: rgba(255, 255, 255, 0.07); }
+.plan-step.now { border-color: var(--sign); background: rgba(255, 201, 51, 0.16); animation: ghost 1s ease-in-out infinite; }
+.plan-step b { position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #23264f; font-family: var(--font-display); font-size: 14px; font-weight: 700; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); }
+.plan-step.now b { background: linear-gradient(180deg, var(--sign-hi), var(--sign-deep)); color: var(--sign-ink); }
+.boost-line { margin: 0 auto !important; display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 10px; padding: 8px 14px; border-radius: 16px; background: rgba(0, 0, 0, 0.2); font-size: 13px !important; animation: rise 0.45s 0.65s ease-out both; }
+.boost-line.gain { background: linear-gradient(90deg, rgba(52, 213, 138, 0.28), rgba(61, 139, 255, 0.2)); box-shadow: inset 0 0 0 1px rgba(52, 213, 138, 0.55); color: #fff !important; }
+.boost-line b { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff; }
+.boost-line small { font-size: 12px; font-weight: 800; color: rgba(230, 240, 255, 0.75); }
+.boost-video { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 10px 14px; border: 0; border-radius: 16px; cursor: pointer; color: #fff; font-size: 14px; font-weight: 800; background: rgba(0, 0, 0, 0.22); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); }
+.boost-video b { font-family: var(--font-display); font-size: 17px; }
+
 @media (prefers-reduced-motion: reduce) {
+  .plan-step.now, .boost-line { animation: none; }
   .notif-bell { animation: none; }
   .daily-card, .daily-card::after, .daily-flame svg, .streak-line { animation: none !important; }
   .garage-btn, .unlock { animation: none; }
@@ -1523,7 +1554,7 @@ body.daily .level-chip {
   </button>
   <button class="btn primary" id="btn-hint" type="button">
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2zM9.5 20h5v1a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1z"/></svg>
-    Indice <span class="badge">VIDÉO</span>
+    <span id="hint-lbl">Indice</span> <span class="badge" id="hint-badge">VIDÉO</span>
   </button>
 </nav>
 
@@ -1591,6 +1622,7 @@ body.daily .level-chip {
     <div class="stars" id="win-stars" aria-hidden="true"></div>
     <p id="win-stat" hidden></p>
     <p class="streak-line" id="win-streak" hidden></p>
+    <p class="boost-line" id="win-boost" hidden></p>
     <button class="btn secondary" id="win-notif" type="button" hidden>🔔 Me rappeler le défi chaque jour</button>
     <div class="unlock" id="win-unlock" hidden></div>
     <button class="btn primary" id="win-next" type="button">Niveau suivant</button>
@@ -1675,6 +1707,22 @@ body.daily .level-chip {
   </div>
 </div>
 
+<!-- Coup de pouce : aides du Casse-tête -->
+<div class="scrim" id="aid" hidden>
+  <div class="card aid-card" role="dialog" aria-modal="true" aria-labelledby="aid-title">
+    <p class="eyebrow">Vous avez <b id="aid-balance">0</b> 👍</p>
+    <h2 id="aid-title">Coup de pouce</h2>
+    <div class="aid-list">
+      <button class="aid-opt" id="aid-first" type="button"><span class="aid-ico">1️⃣</span><span class="aid-txt"><b>Premier coup</b><span>Le bon premier coup pour bien démarrer</span><span class="aid-miss"></span></span><span class="aid-cost">1 👍</span></button>
+      <button class="aid-opt" id="aid-three" type="button"><span class="aid-ico">🔢</span><span class="aid-txt"><b>3 coups d'avance</b><span>Les 3 meilleurs coups depuis ici, numérotés</span><span class="aid-miss"></span></span><span class="aid-cost">2 👍</span></button>
+      <button class="aid-opt" id="aid-pilot" type="button"><span class="aid-ico">🚗</span><span class="aid-txt"><b>Pilote</b><span>Je joue les 5 prochains coups pour vous</span><span class="aid-miss"></span></span><span class="aid-cost">5 👍</span></button>
+      <button class="aid-opt video" id="aid-video" type="button"><span class="aid-ico">🎬</span><span class="aid-txt"><b>3 coups d'avance</b><span>Gratuit contre une vidéo</span></span><span class="aid-cost badge">VIDÉO</span></button>
+    </div>
+    <p class="aid-note">Gagnez des 👍 en finissant les énigmes à l'objectif, et le double sans Annuler ni aide.</p>
+    <button class="btn secondary" id="aid-close" type="button">Fermer</button>
+  </div>
+</div>
+
 <!-- Garage : styles de voitures -->
 <div class="scrim sheet" id="garage" hidden>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="garage-title">
@@ -1686,6 +1734,7 @@ body.daily .level-chip {
       </div>
     </div>
     <p class="garage-sub">Gagnez des étoiles en Course et en Casse-tête pour débloquer de nouveaux styles de voitures.</p>
+    <button class="boost-video" id="garage-boost" type="button"><span>👍 <b id="garage-boost-n">0</b> coups de pouce</span><span class="badge">+2 VIDÉO</span></button>
     <div class="skin-grid" id="skin-grid"></div>
   </div>
 </div>
@@ -2013,13 +2062,14 @@ body.daily .level-chip {
     daily: Object.assign({ last: '', streak: 0, best: 0, done: {} }, saved.daily),
     notif: Object.assign({ on: false, hour: 18, minute: 0, asked: false }, saved.notif),
     uid: saved.uid || '', stats: saved.stats !== false,
+    boost: Object.assign({ n: 3, row: 0, got: {} }, saved.boost),
     seen: saved.seen || {}, rockNodes: new Map(), rocks: [], has: {},
     mode: saved.mode === 'puzzle' && PUZZLES.length ? 'puzzle' : 'run',
     pz: Object.assign({ level: 1, max: 1, stars: {} }, saved.pz),
     W: 4, H: 4, cell: 40, cars: [], byId: {}, nodes: new Map(), grid: null,
     left: 0, hearts: 3, over: false, hintId: null, sinceAd: 0, session: 0
   };
-  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif, uid: S.uid, stats: S.stats });
+  const save = () => store.write({ level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif, uid: S.uid, stats: S.stats, boost: S.boost });
   const show = el => { el.hidden = false; };
   const hide = el => { el.hidden = true; };
   const vibrate = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignoré */ } };
@@ -2271,7 +2321,7 @@ body.daily .level-chip {
      skin_equip, reminder_set, setting_change, home_choice. Envoi groupé (fetch), et sendBeacon à la fermeture. */
   const STATS_HOST = 'https://eu.i.posthog.com';
   const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "phc_tYQQxGun3aD3jRuJY8dvLmE2STkP62vTh5jNDJuQ4kXr";
-  const BUILD = "2026-11-05-12507a5";
+  const BUILD = "2026-11-06-5ccc246";
   const Stats = (function () {
     let queue = [], timer = null, A = null;
     if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
@@ -2730,7 +2780,7 @@ body.daily .level-chip {
   setInterval(() => {
     const now = performance.now(), dt = Math.min(250, now - lastTick);
     lastTick = now;
-    if (!S.timeTotal || !S.timerOn || S.over || document.hidden || !$('ad').hidden || !$('levels').hidden || !$('home').hidden || !$('garage').hidden || !$('pause').hidden) return;
+    if (!S.timeTotal || !S.timerOn || S.over || document.hidden || !$('ad').hidden || !$('levels').hidden || !$('home').hidden || !$('garage').hidden || !$('pause').hidden || !$('aid').hidden) return;
     S.timeLeft -= dt;
     drawTimer();
     const sec = Math.ceil(S.timeLeft / 1000);
@@ -2748,6 +2798,7 @@ body.daily .level-chip {
 
   /* ---------- affichage ---------- */
   function hud() {
+    boostBadge();
     $('lvl-lbl').textContent = 'Niveau';
     $('lvl-num').textContent = S.level;
     $('left').innerHTML = '<b>' + S.left + '</b> ' + (S.left > 1 ? 'voitures' : 'voiture');
@@ -2888,7 +2939,7 @@ body.daily .level-chip {
 
   /* ---------- mode casse-tête ---------- */
   const PN = E.PZ_N;
-  const P = { n: 1, cars: [], pos: [], nodes: [], moves: 0, hist: [], opt: 0, done: false, drag: null, ghost: null, cell: 40 };
+  const P = { n: 1, cars: [], pos: [], nodes: [], moves: 0, hist: [], opt: 0, done: false, drag: null, ghost: null, cell: 40, aided: false, plan: null, auto: false };
 
   function setMode(m) {
     S.mode = m;
@@ -3004,6 +3055,7 @@ body.daily .level-chip {
       pzPlace(j, P.pos[j]);
     });
     pzGhostPlace();
+    if (P.plan) planDraw();
     tutoPz();
   }
 
@@ -3018,6 +3070,7 @@ body.daily .level-chip {
     $('pz-stars').innerHTML = [1, 2, 3].map(i => '<span class="' + (i <= s ? 'on' : '') + '">' + STAR + '</span>').join('');
     $('pz-stars').setAttribute('aria-label', s + (s > 1 ? ' étoiles en jeu' : ' étoile en jeu'));
     $('btn-undo').disabled = !P.hist.length || P.done;
+    boostBadge();
     if (P.cell) tutoPz();
   }
 
@@ -3058,7 +3111,7 @@ body.daily .level-chip {
     P.cars = L.cars.map(c => ({ h: !!c[0], fixed: c[1], len: c[3] }));
     P.pos = L.cars.map(c => c[2]);
     P.opt = L.opt;
-    P.moves = 0; P.hist = []; P.done = false; P.drag = null; P.ghost = null;
+    P.moves = 0; P.hist = []; P.done = false; P.drag = null; P.ghost = null; P.aided = false; P.plan = null; P.auto = false;
     [$('win'), $('lose'), $('levels')].forEach(hide);
     mood('idle', '', 0);
     buddyWin.set('idle');
@@ -3087,6 +3140,7 @@ body.daily .level-chip {
     P.moves++;
     vibrate(8);
     Snd.slide();
+    planStep(j, to);
     pzHud();
     if (j === 0 && to >= PN - P.cars[0].len) pzFinish();
   }
@@ -3108,6 +3162,9 @@ body.daily .level-chip {
     const stars = starsFor(P.moves, P.opt);
     hide($('win-streak'));
     hide($('win-notif'));
+    if (P.moves < P.opt) Stats.track('anomaly_moves', { mode: P.daily ? 'daily' : 'puzzle', level: P.daily ? todayKey() : P.n, moves: P.moves, opt: P.opt, hist: P.hist.length });
+    P.lastGain = boostReward(stars);
+    save();
     Stats.win({ stars, moves: P.moves, streak: P.daily ? (S.daily.last === todayKey() ? S.daily.streak : S.daily.last === yesterdayKey() ? S.daily.streak + 1 : 1) : null });
     if (P.daily) { dailyWin(stars); return; }
     const before = totalStars();
@@ -3122,6 +3179,7 @@ body.daily .level-chip {
     $('win-stat').textContent = P.moves + ' coups · objectif ' + P.opt;
     show($('win-stat'));
     showUnlock(before);
+    showBoost(P.lastGain);
     if (stars < 3) show($('win-retry')); else hide($('win-retry'));
     $('win-next').textContent = P.n >= PUZZLES.length ? 'Voir les énigmes' : 'Énigme suivante';
     show($('win'));
@@ -3131,8 +3189,10 @@ body.daily .level-chip {
   }
 
   function pzUndo() {
-    if (P.done || !P.hist.length) return;
+    if (P.done || P.auto || !P.hist.length) return;
     Stats.count('undos');
+    P.aided = true;
+    planClear();
     const m = P.hist.pop();
     pzClearHint();
     P.pos[m.j] = m.from;
@@ -3144,30 +3204,178 @@ body.daily .level-chip {
     pzHud();
   }
 
-  function pzHint() {
-    if (P.done) return;
-    adNext = 'hint';
-    runAd('reward', ADS.rewardedSeconds, () => {
-      const r = E.pzSolve(P.cars.map(c => ({ h: c.h, fixed: c.fixed, len: c.len })), P.pos, 800000);
-      if (!r || !r.path || !r.path.length) { say('Je sèche…', 1600); return; }
-      pzClearHint();
-      const step = r.path[0];
-      const el = document.createElement('div');
-      el.className = 'ghost';
-      board.appendChild(el);
-      P.ghost = { j: step.car, to: step.to, el };
-      pzGhostPlace();
-      P.nodes[step.car].classList.add('hint');
-      say('Essayez ça !', 2000);
-      Snd.chime();
-      Stats.count('hints');
-      Stats.track('hint_used', { mode: P.daily ? 'daily' : 'puzzle', level: P.daily ? todayKey() : P.n, moves: P.moves });
+  function pzHint() { openAid(); }
+
+  /* ---------- coups de pouce 👍 : récompenses et aides du Casse-tête ----------
+     Gagnés en réussissant à l'objectif (une fois par énigme et par palier : 1 à l'objectif, 2 sans faute,
+     défi du jour 3 ou 4 sans faute), +3 toutes les 3 réussites parfaites d'affilée, +5 tous les 7 jours de série.
+     Dépensés pour : Premier coup (1), 3 coups d'avance (2), Pilote = 5 coups joués (5). La vidéo donne 3 coups d'avance.
+     « Sans faute » = ni Annuler ni aucune aide pendant la partie (P.aided). */
+  const AIDS = { first: 1, three: 2, pilot: 5 };
+  const THUMB = '👍';
+  function boostBadge() {
+    const pz = S.mode === 'puzzle';
+    $('hint-lbl').textContent = pz ? 'Aide' : 'Indice';
+    $('hint-badge').textContent = pz ? THUMB + ' ' + S.boost.n : 'VIDÉO';
+    $('hint-badge').classList.toggle('thumb', pz);
+  }
+  function spend(aid) {
+    const cost = AIDS[aid];
+    if (S.boost.n < cost) return false;
+    S.boost.n -= cost;
+    P.aided = true;
+    save();
+    boostBadge();
+    Stats.track('boost_spent', { aid, cost, left: S.boost.n, mode: P.daily ? 'daily' : 'puzzle', level: P.daily ? todayKey() : P.n, moves: P.moves });
+    return true;
+  }
+  const solveNow = () => E.pzSolve(P.cars.map(c => ({ h: c.h, fixed: c.fixed, len: c.len })), P.pos, 800000);
+  const carCenter = (j, p) => { const c = P.cars[j], k = P.cell; return c.h ? [(p + c.len / 2) * k, (c.fixed + 0.5) * k] : [(c.fixed + 0.5) * k, (p + c.len / 2) * k]; };
+
+  /* plan : les prochains coups optimaux, numérotés sur le plateau ; la main les rejoue en boucle */
+  function planClear() {
+    if (!P.plan) return;
+    P.plan.els.forEach(e => e.remove());
+    P.nodes.forEach(n => n.classList.remove('hint'));
+    P.plan = null;
+  }
+  function planDraw() {
+    const pl = P.plan;
+    if (!pl) return;
+    pl.els.forEach(e => e.remove());
+    pl.els = [];
+    P.nodes.forEach(n => n.classList.remove('hint'));
+    const rest = pl.steps.slice(pl.i), cell = P.cell, pos = P.pos.slice(), pts = [];
+    rest.forEach((s, k) => {
+      const c = P.cars[s.car];
+      const f = document.createElement('div');
+      f.className = 'plan-step' + (k === 0 ? ' now' : '');
+      f.style.left = (c.h ? s.to : c.fixed) * cell + 3 + 'px';
+      f.style.top = (c.h ? c.fixed : s.to) * cell + 3 + 'px';
+      f.style.width = (c.h ? c.len : 1) * cell - 6 + 'px';
+      f.style.height = (c.h ? 1 : c.len) * cell - 6 + 'px';
+      f.innerHTML = '<b>' + (pl.i + k + 1) + '</b>';
+      board.appendChild(f);
+      pl.els.push(f);
+      pts.push([carCenter(s.car, pos[s.car]), carCenter(s.car, s.to)]);
+      pos[s.car] = s.to;
     });
+    if (rest.length) P.nodes[rest[0].car].classList.add('hint');
+    const h = handEl(board, pts[0][0][0], pts[0][0][1], 'drag');
+    pl.els.push(h);
+    if (reduce) return;
+    const n = pts.length, o = pts[0][0], tr = q => 'translate(' + (q[0] - o[0]) + 'px,' + (q[1] - o[1]) + 'px)', fr = [];
+    pts.forEach(([a, b], k) => {
+      const t = k / n, u = 1 / n;
+      fr.push({ transform: tr(a), opacity: 0, offset: t }, { transform: tr(a), opacity: 1, offset: t + 0.15 * u },
+        { transform: tr(b), opacity: 1, offset: t + 0.7 * u }, { transform: tr(b), opacity: 0, offset: t + 0.95 * u });
+    });
+    fr.push({ transform: tr(pts[n - 1][1]), opacity: 0, offset: 1 });
+    h.animate(fr, { duration: 1700 * n, iterations: Infinity, easing: 'ease-in-out' });
+  }
+  function planShow(k) {
+    const r = solveNow();
+    if (!r || !r.path || !r.path.length) { say('Je sèche…', 1600); return; }
+    planClear();
+    pzClearHint();
+    P.plan = { steps: r.path.slice(0, k), i: 0, els: [] };
+    planDraw();
+    say(k > 1 ? 'Suivez les numéros !' : 'Essayez ça !', 2000);
+    Snd.chime();
+  }
+  /* appelé à chaque coup joué : on avance dans le plan, ou on l'efface si le joueur s'en écarte */
+  function planStep(j, to) {
+    const pl = P.plan;
+    if (!pl) return;
+    const s = pl.steps[pl.i];
+    if (s && s.car === j && s.to === to) {
+      pl.i++;
+      if (pl.i >= pl.steps.length) planClear(); else planDraw();
+    } else { planClear(); say('Nouvelle position : aide effacée', 1600); }
+  }
+  /* pilote : joue lui-même les prochains coups optimaux */
+  function pilot(k) {
+    const r = solveNow();
+    if (!r || !r.path || !r.path.length) return;
+    planClear();
+    pzClearHint();
+    P.auto = true;
+    const s0 = S.session, steps = r.path.slice(0, k);
+    say('Je prends le volant !', 1500);
+    let i = 0;
+    const next = () => {
+      if (s0 !== S.session || P.done || i >= steps.length) { P.auto = false; return; }
+      const st = steps[i++], node = P.nodes[st.car], from = P.pos[st.car];
+      node.classList.add('snap');
+      pzPlace(st.car, st.to);
+      setTimeout(() => node.classList.remove('snap'), 200);
+      pzCommit(st.car, from, st.to);
+      setTimeout(next, reduce ? 200 : 520);
+    };
+    setTimeout(next, 350);
+  }
+  /* fenêtre « Coup de pouce » */
+  function openAid() {
+    if (P.done || P.auto) return;
+    const n = S.boost.n;
+    $('aid-balance').textContent = n;
+    $('aid-first').hidden = P.moves > 0;
+    for (const id of ['first', 'three', 'pilot']) {
+      const b = $('aid-' + id), lack = AIDS[id] - n;
+      b.disabled = lack > 0;
+      b.querySelector('.aid-miss').textContent = lack > 0 ? 'Il vous manque ' + lack + ' ' + THUMB : '';
+    }
+    tutoClear();
+    show($('aid'));
+  }
+  function useAid(id) {
+    hide($('aid'));
+    if (id === 'video') {
+      adNext = 'plan3';
+      runAd('reward', ADS.rewardedSeconds, () => { P.aided = true; planShow(3); Stats.count('hints'); Stats.track('hint_used', { mode: P.daily ? 'daily' : 'puzzle', level: P.daily ? todayKey() : P.n, moves: P.moves, aid: 'video3' }); });
+      return;
+    }
+    if (!spend(id)) return;
+    Stats.count('hints');
+    if (id === 'first') planShow(1);
+    else if (id === 'three') planShow(3);
+    else pilot(5);
+  }
+  /* récompense d'une victoire : une seule fois par énigme et par palier */
+  function boostReward(stars) {
+    const B = S.boost, out = [];
+    let gain = 0;
+    if (stars === 3) {
+      const key = P.daily ? 'd:' + todayKey() : 'p:' + P.n, clean = !P.aided;
+      const worth = P.daily ? (clean ? 4 : 3) : (clean ? 2 : 1), prev = B.got[key] || 0;
+      if (worth > prev) {
+        gain += worth - prev;
+        B.got[key] = worth;
+        out.push(clean ? 'Sans faute' : 'À l\'objectif');
+        B.row = (B.row || 0) + 1;
+        if (B.row % 3 === 0) { gain += 3; out.push('3 parfaits d\'affilée'); }
+      }
+    } else B.row = 0;
+    B.n += gain;
+    return { gain, out, stars };
+  }
+  function showBoost(g) {
+    const el = $('win-boost');
+    if (g.gain > 0) {
+      el.innerHTML = '<b>+' + g.gain + ' ' + THUMB + '</b><span>' + g.out.join(' · ') + '</span><small>Total ' + S.boost.n + ' ' + THUMB + '</small>';
+      el.classList.add('gain');
+      Stats.track('boost_earned', { gain: g.gain, reasons: g.out.join(','), total: S.boost.n });
+      setTimeout(() => Snd.chime(), 900);
+    } else if (g.stars < 3) {
+      el.innerHTML = '<span>Finissez en ' + P.opt + ' coups pour gagner des ' + THUMB + ', encore plus sans aide ni Annuler.</span>';
+      el.classList.remove('gain');
+    } else { hide(el); return; }
+    show(el);
   }
 
   /* Glisser-déposer : la voiture suit le doigt le long de sa file, puis se cale sur la case la plus proche. */
   board.addEventListener('pointerdown', e => {
-    if (S.mode !== 'puzzle' || P.done) return;
+    if (S.mode !== 'puzzle' || P.done || P.auto) return;
     const b = e.target.closest('.pcar');
     if (!b || P.drag) return;
     const j = +b.dataset.j, c = P.cars[j], r = pzRange(j);
@@ -3205,7 +3413,7 @@ body.daily .level-chip {
   board.addEventListener('pointercancel', endDrag);
   /* Clavier : flèches pour faire avancer la voiture ciblée d'une case. */
   board.addEventListener('keydown', e => {
-    if (S.mode !== 'puzzle' || P.done) return;
+    if (S.mode !== 'puzzle' || P.done || P.auto) return;
     const b = e.target.closest('.pcar');
     const k = { ArrowLeft: [-1, 1], ArrowUp: [-1, 0], ArrowRight: [1, 1], ArrowDown: [1, 0] }[e.key];
     if (!b || !k) return;
@@ -3334,6 +3542,7 @@ body.daily .level-chip {
   function win() {
     S.sinceAd++;
     hide($('win-streak'));
+    hide($('win-boost'));
     hide($('win-notif'));
     const before = totalStars();
     S.rs[S.level] = Math.max(S.rs[S.level] || 0, S.hearts);
@@ -3728,9 +3937,10 @@ body.daily .level-chip {
     card.setAttribute('aria-label', 'Défi du jour, ' + txt + (done ? ', réussi' : ', objectif ' + L.opt + ' coups') + ', série de ' + plural(st, 'jour'));
   }
   function dailyWin(stars) {
-    const before = totalStars(), k = todayKey(), D = S.daily;
+    const before = totalStars(), k = todayKey(), D = S.daily, newDay = D.last !== k;
     if (D.last !== k) { D.streak = D.last === yesterdayKey() ? D.streak + 1 : 1; D.last = k; }
     D.best = Math.max(D.best || 0, D.streak);
+    if (newDay && D.streak % 7 === 0) { S.boost.n += 5; P.lastGain.gain += 5; P.lastGain.out.push('Série de ' + D.streak + ' jours'); }
     const prev = D.done[k];
     D.done[k] = { stars: Math.max(prev ? prev.stars : 0, stars), moves: Math.min(prev ? prev.moves : 999, P.moves) };
     const keys = Object.keys(D.done).sort();
@@ -3745,6 +3955,7 @@ body.daily .level-chip {
     $('win-streak').innerHTML = FLAME + '<span>Série : ' + plural(D.streak, 'jour') + '</span><small>record ' + D.best + '</small>';
     show($('win-streak'));
     showUnlock(before);
+    showBoost(P.lastGain);
     if (stars < 3) show($('win-retry')); else hide($('win-retry'));
     $('win-next').textContent = 'Retour à l\'accueil';
     const wn = $('win-notif');
@@ -3830,7 +4041,7 @@ body.daily .level-chip {
     garageHud();
     if (!$('garage').hidden) renderGarage();
   }
-  function openGarage() { renderGarage(); show($('garage')); }
+  function openGarage() { renderGarage(); $('garage-boost-n').textContent = S.boost.n; show($('garage')); }
   /* encart de la fenêtre de victoire : nouveau skin, ou étoiles qui manquent pour le suivant */
   function showUnlock(before) {
     const el = $('win-unlock'), after = totalStars();
@@ -4000,6 +4211,19 @@ body.daily .level-chip {
   $('levels-close').addEventListener('click', () => hide($('levels')));
   $('btn-home').addEventListener('click', openHome);
   $('home-garage').addEventListener('click', openGarage);
+  ['first', 'three', 'pilot', 'video'].forEach(id => $('aid-' + id).addEventListener('click', () => useAid(id)));
+  $('aid-close').addEventListener('click', () => { hide($('aid')); tutoLater(150); });
+  $('garage-boost').addEventListener('click', () => {
+    adNext = 'boost2';
+    runAd('reward', ADS.rewardedSeconds, () => {
+      S.boost.n += 2;
+      save();
+      $('garage-boost-n').textContent = S.boost.n;
+      boostBadge();
+      Snd.chime();
+      Stats.track('boost_earned', { gain: 2, reasons: 'video', total: S.boost.n });
+    });
+  });
   function openPause() {
     const pz = S.mode === 'puzzle';
     $('pause-sub').textContent = pz ? (P.daily ? 'Défi du jour · objectif ' + P.opt + ' coups' : 'Casse-tête · Énigme ' + P.n) : 'Course · Niveau ' + S.level;
@@ -4121,6 +4345,7 @@ body.daily .level-chip {
     if (!$('ad').hidden && !$('ad-close').disabled) closeAd();
     else if (!$('levels').hidden) hide($('levels'));
     else if (!$('garage').hidden) hide($('garage'));
+    else if (!$('aid').hidden) hide($('aid'));
     else if (!$('notif').hidden) hide($('notif'));
     else if (!$('pause').hidden) closePause();
     else if ($('home').hidden && $('win').hidden && $('lose').hidden) openPause();
