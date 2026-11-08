@@ -5,6 +5,7 @@ let t = fs.readFileSync(path.join(root, 'src/template.html'), 'utf8');
 t = t.replace('/*ENGINE*/', () => fs.readFileSync(path.join(root, 'src/engine.js'), 'utf8'));
 t = t.replace('/*PUZZLES*/[]', () => fs.readFileSync(path.join(root, 'data/puzzles.json'), 'utf8'));
 t = t.replace('/*DAILY*/[]', () => fs.readFileSync(path.join(root, 'data/daily.json'), 'utf8'));
+t = t.replace('/*COURSE*/[]', () => fs.readFileSync(path.join(root, 'data/course.json'), 'utf8'));
 /* clé publique PostHog (phc_…) : variable d'environnement POSTHOG_KEY, sinon stats.config.json ; vide = statistiques désactivées */
 let statsKey = process.env.POSTHOG_KEY || '';
 try { if (!statsKey) statsKey = JSON.parse(fs.readFileSync(path.join(root, 'stats.config.json'), 'utf8')).posthogKey || ''; } catch (e) { /* pas de configuration */ }
