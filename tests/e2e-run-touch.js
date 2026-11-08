@@ -9,7 +9,8 @@ const solution = n => { const L = toL(LV[n - 1]), A = E.crAnalyse(L); let s = 0;
   const p = await b.newPage({ viewport: { width: 390, height: 780 }, hasTouch: true, isMobile: true });
   const errs = []; p.on('pageerror', e => errs.push(e.message));
   await p.goto('file://' + require('path').resolve(__dirname, '../dist/index.html')); await p.waitForTimeout(500);
-  await p.tap('#home-run'); await p.waitForTimeout(400); // quitte l'accueil
+  await p.tap('#home-run'); await p.waitForTimeout(500); // accueil → carte des villes
+  await p.tap('.cnode[data-n="1"]', { force: true }); await p.waitForTimeout(400); // carte → niveau 1
   for (let lvl = 1; lvl <= 4; lvl++) {
     for (const i of solution(lvl)) { await p.tap('.car[data-id="' + i + '"]'); await p.waitForTimeout(420); }
     await p.waitForTimeout(900);
