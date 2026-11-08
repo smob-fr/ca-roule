@@ -1535,7 +1535,49 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
 .cmap-lock { position: sticky; bottom: 12px; margin: -110px 12px 12px; z-index: 5; display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 18px; background: rgba(15, 17, 48, 0.92); box-shadow: inset 0 0 0 1.5px var(--psign); font-size: 13.5px; color: var(--ink-dim); }
 .cmap-lock b { font-family: var(--font-display); font-size: 18px; color: #fff; }
 .cmap-play { flex: none; }
+/* ---------- coffres, missions, bandeau ---------- */
+.home-extra { flex: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mini-btn { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 6px 10px; border: 0; border-radius: 18px; cursor: pointer; text-align: left; color: #fff; background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+.mini-btn .ico { font-size: 22px; }
+.mini-btn b { display: block; font-family: var(--font-display); font-size: 14px; font-weight: 600; line-height: 1.1; }
+.mini-btn small { font-size: 11.5px; font-weight: 800; color: var(--ink-dim); }
+.mini-btn.ready { box-shadow: inset 0 0 0 2px var(--sign), 0 0 16px rgba(255, 201, 51, 0.45); animation: cready 1.4s ease-in-out infinite; }
+.mini-btn.ready small { color: var(--sign-hi); }
+@keyframes cready { 50% { transform: scale(1.03); } }
+.cmap-foot { flex: none; display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 8px; align-items: stretch; }
+.cmap-foot .mini-btn { min-height: 52px; padding: 6px 8px; }
+.cmap-foot .mini-btn b { font-size: 13px; }
+.chest-cta { box-shadow: inset 0 0 0 2px var(--sign), 0 0 16px rgba(255, 201, 51, 0.35); }
+.chest-card { align-items: center; overflow: hidden; }
+.chest-art { width: 150px; height: 130px; animation: cshake 1.2s ease-in-out infinite; transform-origin: 50% 100%; }
+.chest-art svg { width: 100%; height: 100%; overflow: visible; }
+.chest-art .lid { transform-origin: 20px 60px; transition: transform 0.5s cubic-bezier(.3, 1.6, .5, 1); }
+.chest-card.opened .chest-art { animation: none; }
+.chest-card.opened .lid { transform: rotate(-28deg) translate(-6px, -14px); }
+@keyframes cshake { 0%, 55%, 100% { transform: rotate(0); } 65% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } 85% { transform: rotate(-3deg); } }
+.chest-loot { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; opacity: 0; transform: scale(0.8); transition: opacity 0.3s 0.2s, transform 0.4s 0.2s cubic-bezier(.2, 1.6, .4, 1); }
+.chest-card.opened .chest-loot { opacity: 1; transform: none; }
+.loot-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border-radius: 18px; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); font-size: 12px; color: var(--ink-dim); }
+.loot-item .ico { font-size: 28px; }
+.loot-item b { font-family: var(--font-display); font-size: 20px; color: #fff; }
+.mis-card { gap: 10px; text-align: left; }
+.mis-card h2, .mis-card > p { text-align: center; }
+.mis-list { display: flex; flex-direction: column; gap: 8px; }
+.mis { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px; padding: 10px; border-radius: 16px; background: rgba(255, 255, 255, 0.08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12); font-size: 13px; line-height: 1.3; }
+.mis .ico { font-size: 20px; text-align: center; }
+.mis .bar { margin-top: 5px; height: 6px; border-radius: 99px; background: rgba(0, 0, 0, 0.35); overflow: hidden; }
+.mis .bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #8dffc6, #1fb874); }
+.mis .rw { font-size: 12px; font-weight: 900; color: var(--sign-hi); white-space: nowrap; }
+.mis.ok { box-shadow: inset 0 0 0 1.5px var(--ok); }
+.mis.ok .rw { color: var(--ok); }
+.mis-bonus { grid-template-columns: 30px 1fr; }
+.mis-bonus.ok { box-shadow: inset 0 0 0 1.5px var(--ok); }
+.toast { position: fixed; z-index: 40; left: 50%; top: max(14px, env(safe-area-inset-top, 0px)); transform: translateX(-50%); width: min(92vw, 360px); box-sizing: border-box; display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border-radius: 18px; background: linear-gradient(135deg, #1fb874, #128a56); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45); font-size: 13px; pointer-events: none; }
+.toast b { font-family: var(--font-display); font-size: 16px; }
+.toast.in { animation: toastin 0.4s cubic-bezier(.2, 1.5, .4, 1); }
+@keyframes toastin { from { transform: translate(-50%, -30px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
+  .mini-btn.ready, .chest-art, .toast.in { animation: none; }
   .cnode.cur { animation: none; }
   .cbtn i, body.reversing .car { animation: none; }
   .plan-step.now, .boost-line { animation: none; }
@@ -1663,7 +1705,11 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     <span class="garage-txt"><b>Garage</b><small id="garage-hint"></small></span>
     <span class="star-chip" id="home-stars"></span>
   </button>
-  <p class="home-foot">1000 niveaux · 50 énigmes<span id="stats-note"> · statistiques anonymes (désactivables dans le menu)</span></p>
+  <div class="home-extra">
+    <button class="mini-btn" id="home-missions" type="button"><span class="ico">📋</span><span><b>Missions du jour</b><small>0 / 3</small></span></button>
+    <button class="mini-btn" id="home-chest" type="button"><span class="ico">🎁</span><span><b>Coffre à étoiles</b><small>0 / 20 ★</small></span></button>
+  </div>
+  <p class="home-foot">75 niveaux de Course · 50 énigmes<span id="stats-note"> · statistiques anonymes (désactivables dans le menu)</span></p>
 </section>
 
 <!-- Niveau gagné -->
@@ -1676,6 +1722,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     <p id="win-stat" hidden></p>
     <p class="streak-line" id="win-streak" hidden></p>
     <p class="boost-line" id="win-boost" hidden></p>
+    <button class="btn secondary chest-cta" id="win-chest" type="button" hidden>🎁 Coffre à étoiles prêt : l'ouvrir</button>
     <button class="btn secondary" id="win-notif" type="button" hidden>🔔 Me rappeler le défi chaque jour</button>
     <div class="unlock" id="win-unlock" hidden></div>
     <button class="btn primary" id="win-next" type="button">Niveau suivant</button>
@@ -1790,8 +1837,35 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   <div class="cmap-scroll" id="cmap-scroll"><div class="cmap-world" id="cmap-world"></div>
     <div class="cmap-lock" id="cmap-lock" hidden><b>Ville verrouillée</b><span id="cmap-lock-txt"></span></div>
   </div>
-  <button class="btn primary cmap-play" id="cmap-play" type="button">Jouer</button>
+  <div class="cmap-foot">
+    <button class="mini-btn" id="cmap-missions" type="button"><span class="ico">📋</span><span><b>Missions</b><small>0 / 3</small></span></button>
+    <button class="btn primary cmap-play" id="cmap-play" type="button">Jouer</button>
+    <button class="mini-btn" id="cmap-chest" type="button"><span class="ico">🎁</span><span><b>Coffre</b><small>0 / 20 ★</small></span></button>
+  </div>
 </section>
+
+<!-- Coffre à étoiles -->
+<div class="scrim over" id="chest" hidden>
+  <div class="card chest-card" id="chest-card" role="dialog" aria-modal="true" aria-labelledby="chest-title">
+    <h2 id="chest-title">Coffre à étoiles !</h2>
+    <div class="chest-art"><svg viewBox="0 0 150 130" aria-hidden="true"><defs><linearGradient id="chw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c47a3a"/><stop offset="1" stop-color="#7a4318"/></linearGradient><linearGradient id="chg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset="1" stop-color="#ff9f1a"/></linearGradient></defs><ellipse cx="75" cy="124" rx="60" ry="6" fill="rgba(0,0,0,.35)"/><rect x="15" y="58" width="120" height="62" rx="10" fill="url(#chw)"/><rect x="15" y="56" width="120" height="10" fill="url(#chg)"/><rect x="66" y="56" width="18" height="64" fill="url(#chg)"/><g class="lid"><path d="M15 62 Q15 22 75 22 Q135 22 135 62 Z" fill="url(#chw)"/><rect x="66" y="22" width="18" height="40" fill="url(#chg)"/><rect x="62" y="50" width="26" height="22" rx="5" fill="#fff2a8" stroke="#a05c00" stroke-width="3"/></g></svg></div>
+    <div class="chest-loot" id="chest-loot"></div>
+    <p id="chest-next"></p>
+    <button class="btn primary" id="chest-close" type="button">Récupérer</button>
+  </div>
+</div>
+
+<!-- Missions du jour -->
+<div class="scrim" id="missions" hidden>
+  <div class="card mis-card" role="dialog" aria-modal="true" aria-labelledby="mis-title">
+    <h2 id="mis-title">Missions du jour</h2>
+    <p id="mis-time"></p>
+    <div class="mis-list" id="mis-list"></div>
+    <div class="mis mis-bonus" id="mis-bonus"><span class="ico">🎁</span><div class="t"><b>Bonus des 3 missions</b><br>une aide en réserve</div></div>
+    <button class="btn secondary" id="mis-close" type="button">Fermer</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <!-- Garage : styles de voitures -->
 <div class="scrim sheet" id="garage" hidden>
@@ -2224,7 +2298,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     /* crv = version de la Course : 1 = « sorties limitées ». L'ancienne progression (1000 niveaux) est mise de côté. */
     legacy: saved.crv === 1 ? (saved.legacy || null) : (saved.max > 1 || (saved.rs && Object.keys(saved.rs).length) ? { max: saved.max | 0, rs: saved.rs || {} } : null),
     level: saved.crv === 1 ? clamp(saved.level) : 1, max: saved.crv === 1 ? clamp(saved.max) : 1, test: !!saved.test,
-    freeAid: saved.freeAid || {},
+    freeAid: saved.freeAid || {}, inv: saved.inv || {}, chest: saved.chest | 0, mis: saved.mis || null,
     sfx: saved.sfx !== false, music: saved.music !== false,
     skin: typeof saved.skin === 'string' ? saved.skin : 'classic', rs: saved.crv === 1 ? (saved.rs || {}) : {}, ads: saved.ads || {},
     daily: Object.assign({ last: '', streak: 0, best: 0, done: {} }, saved.daily),
@@ -2237,7 +2311,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     W: 4, H: 4, cell: 40, cars: [], byId: {}, nodes: new Map(), grid: null,
     left: 0, hearts: 3, over: false, hintId: null, sinceAd: 0, session: 0
   };
-  const save = () => store.write({ crv: 1, legacy: S.legacy, freeAid: S.freeAid, level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif, uid: S.uid, stats: S.stats, boost: S.boost });
+  const save = () => store.write({ crv: 1, legacy: S.legacy, freeAid: S.freeAid, inv: S.inv, chest: S.chest, mis: S.mis, level: S.level, max: S.max, test: S.test, seen: S.seen, mode: S.mode, pz: S.pz, sfx: S.sfx, music: S.music, skin: S.skin, rs: S.rs, ads: S.ads, daily: S.daily, notif: S.notif, uid: S.uid, stats: S.stats, boost: S.boost });
   const show = el => { el.hidden = false; };
   const hide = el => { el.hidden = true; };
   const vibrate = ms => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignoré */ } };
@@ -2489,7 +2563,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
      skin_equip, reminder_set, setting_change, home_choice. Envoi groupé (fetch), et sendBeacon à la fermeture. */
   const STATS_HOST = 'https://eu.i.posthog.com';
   const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "phc_tYQQxGun3aD3jRuJY8dvLmE2STkP62vTh5jNDJuQ4kXr";
-  const BUILD = "2026-11-08-5e5b2db";
+  const BUILD = "2026-11-08-5d5ca9b";
   const Stats = (function () {
     let queue = [], timer = null, A = null;
     if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
@@ -3109,6 +3183,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     S.reserve = S.opt + (S.L.boss ? 5 : 3);
     S.over = false;
     S.reverse = false;
+    S.undoUsed = false;
     S.hintId = null;
     S.loseReason = '';
     [$('win'), $('lose'), $('levels')].forEach(hide);
@@ -3353,6 +3428,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
 
   function pzWin() {
     S.sinceAd++;
+    hide($('win-chest'));
     const stars = starsFor(P.moves, P.opt);
     hide($('win-streak'));
     hide($('win-notif'));
@@ -3360,6 +3436,8 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     P.lastGain = boostReward(stars);
     save();
     Stats.win({ stars, moves: P.moves, streak: P.daily ? (S.daily.last === todayKey() ? S.daily.streak : S.daily.last === yesterdayKey() ? S.daily.streak + 1 : 1) : null });
+    if (P.daily) mission('daily'); else mission('pz2');
+    if (stars === 3) mission('perfect2');
     if (P.daily) { dailyWin(stars); return; }
     const before = totalStars();
     const key = String(P.n);
@@ -3414,6 +3492,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   }
   function spend(aid) {
     /* première utilisation des aides de Course offerte */
+    if ((aid === 'fuel' || aid === 'reverse') && (S.inv[aid] | 0) > 0) { S.inv[aid]--; save(); Stats.track('boost_spent', { aid, cost: 0, inv: true, mode: 'run', level: S.level }); return true; }
     if ((aid === 'fuel' || aid === 'reverse') && !S.freeAid[aid]) { S.freeAid[aid] = 1; save(); Stats.track('boost_spent', { aid, cost: 0, free: true, mode: 'run', level: S.level }); return true; }
     const cost = AIDS[aid];
     if (S.boost.n < cost) return false;
@@ -3519,9 +3598,9 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     ['fuel', 'reverse', 'best'].forEach(id => { $('aid-' + id).hidden = !run; });
     if (run) {
       for (const id of ['fuel', 'reverse']) {
-        const b = $('aid-' + id), free = !S.freeAid[id], lack = free ? 0 : AIDS[id] - n;
+        const b = $('aid-' + id), have = S.inv[id] | 0, free = have > 0 || !S.freeAid[id], lack = free ? 0 : AIDS[id] - n;
         b.disabled = lack > 0;
-        b.querySelector('.aid-cost').textContent = free ? 'Offert' : AIDS[id] + ' ' + THUMB;
+        b.querySelector('.aid-cost').textContent = have > 0 ? 'En réserve ×' + have : free ? 'Offert' : AIDS[id] + ' ' + THUMB;
         b.querySelector('.aid-cost').classList.toggle('free', free);
         b.querySelector('.aid-miss').textContent = lack > 0 ? 'Il vous manque ' + lack + ' ' + THUMB : '';
       }
@@ -3691,6 +3770,8 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     lookAt(rect.left + rect.width / 2, rect.top + rect.height / 2);
     if (T[i] < 0) {
       Snd.vroom();
+      mission('cars30');
+      { const gt = S.L.gates.find(x => x.side === (c.h ? (c.dir > 0 ? 'R' : 'L') : (c.dir > 0 ? 'B' : 'T')) && x.at === c.line); if (gt && gt.color !== 'any') mission('colgate'); }
       const g = S.gateEls.find(x => x.g.side === (c.h ? (c.dir > 0 ? 'R' : 'L') : (c.dir > 0 ? 'B' : 'T')) && x.g.at === c.line);
       if (g) setTimeout(() => { g.el.classList.remove('flash'); void g.el.offsetWidth; g.el.classList.add('flash'); }, 250);
     } else Snd.slide();
@@ -3714,6 +3795,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   function crUndo() {
     if (!S.hist.length) return;
     Stats.count('undos');
+    S.undoUsed = true;
     S.P = S.hist.pop();
     S.moves = Math.max(0, S.moves - 1);
     S.over = false;
@@ -3736,6 +3818,10 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     const before = totalStars(), stars = crStars(S.moves);
     S.rs[S.level] = Math.max(S.rs[S.level] || 0, stars);
     Stats.win({ stars, moves: S.moves, opt: S.opt });
+    mission('win3');
+    if (stars === 3) mission('perfect2');
+    if (!S.undoUsed) mission('noundo');
+    if (S.L.hard) mission('hard');
     if (S.level >= S.max && S.level < MAX) S.max = S.level + 1;
     save();
     $('win-title').textContent = S.cheerLine || (stars === 3 ? 'Parfait !' : 'Dégagé !');
@@ -4060,6 +4146,8 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     $('home-pz').hidden = !PUZZLES.length;
     dailyHud();
     garageHud();
+    chestHud();
+    missionsHud();
     homeOpen = true;
     Snd.setStyle('run');
     home.classList.remove('leaving');
@@ -4699,6 +4787,8 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     $('cmap-prev').disabled = mapCity === 0;
     $('cmap-next').disabled = mapCity >= CITIES.length - 1;
     $('cmap-lock').hidden = open;
+    chestHud();
+    missionsHud();
     $('cmap-lock-txt').textContent = 'Battez le niveau géant de « ' + (CITIES[mapCity - 1] || C).name + ' » pour ouvrir cette ville. Nouveauté : ' + C.news.toLowerCase() + '.';
     /* dimensions : 10 colonnes sur la largeur, la hauteur suit le nombre de lignes de la route */
     const W = Math.min(480, $('cmap-scroll').clientWidth || 390);
@@ -4748,6 +4838,120 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   $('cmap-next').addEventListener('click', () => { if (mapCity < CITIES.length - 1) { mapCity++; drawMap(); } });
   $('cmap-back').addEventListener('click', () => { hide($('cmap')); openHome(); });
   $('cmap-play').addEventListener('click', () => { hide($('cmap')); start(Math.min(S.max, MAX)); });
+
+
+  /* ---------- coffres à étoiles et missions du jour ----------
+     Coffre : toutes les 20 étoiles de Course (S.chest = nombre de coffres déjà ouverts). Contenu : des 👍 et une aide
+     en réserve (S.inv.fuel / S.inv.reverse, utilisées avant de payer en 👍).
+     Missions : 3 par jour tirées par la date dans MISSIONS ; progression S.mis, récompense versée dès qu'elle est finie. */
+  const CHEST_EVERY = 20;
+  const courseStars = () => { let n = 0; for (const k in S.rs) n += S.rs[k] | 0; return n; };
+  const chestsReady = () => Math.max(0, Math.floor(courseStars() / CHEST_EVERY) - S.chest);
+  function chestHud() {
+    const ready = chestsReady(), cs = courseStars(), into = cs - Math.floor(cs / CHEST_EVERY) * CHEST_EVERY;
+    const txt = ready ? 'Coffre prêt !' : into + ' / ' + CHEST_EVERY + ' ★';
+    ['home-chest', 'cmap-chest'].forEach(id => { const b = $(id); if (!b) return; b.classList.toggle('ready', ready > 0); b.querySelector('small').textContent = txt; });
+  }
+  function chestCheck() {
+    const b = $('win-chest');
+    b.hidden = !chestsReady();
+  }
+  function openChest() {
+    if (!chestsReady()) return;
+    S.chest++;
+    const r = Math.random(), thumbs = 3 + ((r * 3) | 0), aid = r < 0.5 ? 'fuel' : 'reverse';
+    S.boost.n += thumbs;
+    S.inv[aid] = (S.inv[aid] || 0) + 1;
+    save();
+    boostBadge();
+    chestHud();
+    Stats.track('chest_open', { n: S.chest, thumbs, aid, stars: courseStars() });
+    $('chest-loot').innerHTML =
+      '<div class="loot-item"><span class="ico">👍</span><b>+' + thumbs + '</b>coups de pouce</div>' +
+      '<div class="loot-item"><span class="ico">' + (aid === 'fuel' ? '⛽' : '↩️') + '</span><b>×1</b>' + (aid === 'fuel' ? '+3 coups' : 'marche arrière') + '</div>';
+    const cs = courseStars();
+    $('chest-next').textContent = 'Prochain coffre : ' + (cs - Math.floor(cs / CHEST_EVERY) * CHEST_EVERY) + ' / ' + CHEST_EVERY + ' ★';
+    hide($('win'));
+    $('chest-card').classList.remove('opened');
+    show($('chest'));
+    Snd.chime();
+    setTimeout(() => { $('chest-card').classList.add('opened'); Snd.win(3); celebrate(); }, reduce ? 0 : 700);
+  }
+
+  const MISSIONS = {
+    win3: { t: 'Finir 3 niveaux de Course', n: 3, r: 2, ico: '🏁' },
+    perfect2: { t: 'Finir 2 niveaux à l\'objectif (3 étoiles)', n: 2, r: 3, ico: '⭐' },
+    noundo: { t: 'Finir un niveau de Course sans Annuler', n: 1, r: 2, ico: '✅' },
+    pz2: { t: 'Résoudre 2 énigmes du Casse-tête', n: 2, r: 2, ico: '🧩' },
+    cars30: { t: 'Faire sortir 30 voitures en Course', n: 30, r: 2, ico: '🚗' },
+    colgate: { t: 'Sortir 10 voitures par une porte de couleur', n: 10, r: 2, ico: '🎨' },
+    daily: { t: 'Réussir le défi du jour', n: 1, r: 3, ico: '🔥' },
+    hard: { t: 'Gagner un niveau Difficile', n: 1, r: 3, ico: '💪' }
+  };
+  function missionsToday() {
+    const k = todayKey();
+    if (!S.mis || S.mis.day !== k) {
+      const ids = Object.keys(MISSIONS), d = new Date(), seed = d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate();
+      let s = seed;
+      const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296, pickd = [];
+      while (pickd.length < 3) { const id = ids[(rnd() * ids.length) | 0]; if (!pickd.includes(id)) pickd.push(id); }
+      S.mis = { day: k, list: pickd, prog: {}, bonus: 0 };
+      save();
+    }
+    return S.mis;
+  }
+  let toastTimer = null;
+  function toast(html) {
+    const el = $('toast');
+    el.innerHTML = html;
+    show(el);
+    el.classList.remove('in'); void el.offsetWidth; el.classList.add('in');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => hide(el), 2600);
+  }
+  /* fait avancer une mission ; la récompense est versée dès qu'elle est finie */
+  function mission(id, by) {
+    const M = missionsToday();
+    if (!M.list.includes(id)) return;
+    const def = MISSIONS[id], before = M.prog[id] || 0;
+    if (before >= def.n) return;
+    M.prog[id] = Math.min(def.n, before + (by || 1));
+    if (M.prog[id] >= def.n) {
+      S.boost.n += def.r;
+      boostBadge();
+      toast('<b>Mission accomplie !</b><span>' + def.t + ' · +' + def.r + ' 👍</span>');
+      Stats.track('mission_done', { id, reward: def.r });
+      if (!M.bonus && M.list.every(x => (M.prog[x] || 0) >= MISSIONS[x].n)) {
+        M.bonus = 1;
+        const aid = Math.random() < 0.5 ? 'fuel' : 'reverse';
+        S.inv[aid] = (S.inv[aid] || 0) + 1;
+        setTimeout(() => toast('<b>Les 3 missions sont finies !</b><span>Bonus : ' + (aid === 'fuel' ? '+3 coups' : 'une marche arrière') + ' en réserve</span>'), 2800);
+      }
+    }
+    save();
+    missionsHud();
+  }
+  function missionsHud() {
+    const M = missionsToday(), done = M.list.filter(x => (M.prog[x] || 0) >= MISSIONS[x].n).length;
+    ['home-missions', 'cmap-missions'].forEach(id => { const b = $(id); if (b) b.querySelector('small').textContent = done + ' / 3'; });
+  }
+  function openMissions() {
+    const M = missionsToday();
+    $('mis-list').innerHTML = M.list.map(id => {
+      const d = MISSIONS[id], p = M.prog[id] || 0, ok = p >= d.n;
+      return '<div class="mis' + (ok ? ' ok' : '') + '"><span class="ico">' + (ok ? '✅' : d.ico) + '</span><div class="t">' + d.t + (d.n > 1 ? ' · ' + p + ' / ' + d.n : '') +
+        '<div class="bar"><i style="width:' + Math.round(100 * p / d.n) + '%"></i></div></div><span class="rw">' + (ok ? 'Fait · ' : '') + '+' + d.r + ' 👍</span></div>';
+    }).join('');
+    $('mis-bonus').classList.toggle('ok', !!M.bonus);
+    const now = new Date(), next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), mins = Math.round((next - now) / 60000);
+    $('mis-time').textContent = 'Nouvelles missions dans ' + Math.floor(mins / 60) + ' h ' + String(mins % 60).padStart(2, '0');
+    show($('missions'));
+  }
+  ['home-chest', 'cmap-chest'].forEach(id => $(id).addEventListener('click', () => { if (chestsReady()) openChest(); else toast('<b>Coffre à étoiles</b><span>Encore ' + (CHEST_EVERY - (courseStars() % CHEST_EVERY)) + ' ★ en Course pour l\'ouvrir.</span>'); }));
+  ['home-missions', 'cmap-missions'].forEach(id => $(id).addEventListener('click', openMissions));
+  $('win-chest').addEventListener('click', openChest);
+  $('chest-close').addEventListener('click', () => { hide($('chest')); });
+  $('mis-close').addEventListener('click', () => hide($('missions')));
 
   /* ---------- événements ---------- */
   board.addEventListener('click', e => {
@@ -4875,6 +5079,8 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     if (!$('ad').hidden && !$('ad-close').disabled) closeAd();
     else if (!$('levels').hidden) hide($('levels'));
     else if (!$('garage').hidden) hide($('garage'));
+    else if (!$('chest').hidden) hide($('chest'));
+    else if (!$('missions').hidden) hide($('missions'));
     else if (!$('aid').hidden) hide($('aid'));
     else if (!$('notif').hidden) hide($('notif'));
     else if (!$('pause').hidden) closePause();

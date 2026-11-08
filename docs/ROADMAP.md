@@ -15,6 +15,7 @@
 - Indices en vidéo récompensée (déjà câblés), vie supplémentaire, relance après chrono.
 
 ## 3. Contenu et rétention
+- ~~Nouvelle Course « sorties limitées »~~ : faite (75 niveaux, 3 villes, carte illustrée, coffres, missions). Suite : villes 4 à 6 (aéroport et plaques tournantes, montagne et voitures bâchées, plage et feux), aides Peinture et Dépanneuse, collections de plaques et « permis » de ville, calendrier de la semaine, rallye du week-end.
 - ~~Sons et musique~~ : fait (Web Audio synthétisé). Piste possible : vraie musique composée en fichiers pour la version store.
 - ~~Skins de voitures~~ : fait (7 styles débloqués par les étoiles). Piste : skins exclusifs via vidéo récompensée ou achat.
 - ~~Défi du jour~~ : fait (casse-tête expert de 30 coups et plus, série de jours). Rappels : faits (notifications locales). Pistes : protection de série via vidéo, classement du jour.
