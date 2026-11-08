@@ -23,6 +23,8 @@ jobs:
         run: node tests/verify-levels.js
       - name: Vérifier les défis du jour
         run: node tests/verify-daily.js
+      - name: Vérifier les niveaux de la nouvelle Course
+        run: node tests/verify-course.js
       - name: Construire
         run: node tools/build.js
       - uses: actions/configure-pages@v5

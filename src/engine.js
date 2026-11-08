@@ -260,7 +260,100 @@
     return { opt: Infinity, ways: 0, path: null, states: states.length };
   }
 
-  const api = { MAX_LEVEL, PALETTE_SIZE, PZ_N, generate, solve, rounds, pathOf, cellIdx, makeGrid, params, pzSolve };
+
+  /* ---------- mode Course « sorties limitées » ----------
+   * Niveau L = { W, H, cars:[{h, line, pos, len, dir, color}], gates:[{side, at, color}], bars:[{side, at}], buttons:[{x, y, bar}] }
+   * side ∈ T, B, L, R ; at = colonne (T/B) ou ligne (L/R) ; color = 'any' ou une couleur ; dir = +1 (droite/bas) ou -1.
+   * Toucher une voiture : elle avance jusqu'au premier obstacle. Elle sort si elle arrive au bord face à une porte
+   * de sa couleur (ou « toutes couleurs ») que ne ferme aucune barrière. Une barrière s'ouvre pour de bon quand une voiture
+   * s'arrête sur son bouton. État = positions (−1 = sortie) + masque des barrières ouvertes en dernière case. */
+  function crOcc(L, P) {
+    const g = new Int8Array(L.W * L.H).fill(-1);
+    for (let i = 0; i < L.cars.length; i++) {
+      const c = L.cars[i];
+      if (P[i] < 0) continue;
+      for (let k = 0; k < c.len; k++) g[c.h ? c.line * L.W + P[i] + k : (P[i] + k) * L.W + c.line] = i;
+    }
+    return g;
+  }
+  const crSide = c => (c.h ? (c.dir > 0 ? 'R' : 'L') : (c.dir > 0 ? 'B' : 'T'));
+  function crGateOpen(L, P, side, at, color) {
+    const g = L.gates.find(x => x.side === side && x.at === at);
+    if (!g || !(g.color === 'any' || g.color === color)) return false;
+    const mask = P[L.cars.length] || 0, bars = L.bars || [];
+    for (let b = 0; b < bars.length; b++) if (bars[b].side === side && bars[b].at === at && !(mask & (1 << b))) return false;
+    return true;
+  }
+  /* glissade de la voiture i ; back = marche arrière (aide) : elle recule et ne peut pas sortir */
+  function crSlide(L, P, i, g, back) {
+    const c = L.cars[i], N = c.h ? L.W : L.H, dir = back ? -c.dir : c.dir;
+    if (P[i] < 0) return null;
+    g = g || crOcc(L, P);
+    let p = P[i];
+    for (;;) {
+      const front = dir > 0 ? p + c.len : p - 1;
+      if (front < 0 || front >= N) {
+        if (!back && crGateOpen(L, P, crSide(c), c.line, c.color)) return -1;
+        break;
+      }
+      if (g[c.h ? c.line * L.W + front : front * L.W + c.line] >= 0) break;
+      p += dir;
+    }
+    return p === P[i] ? null : p;
+  }
+  /* état après le coup (ou null si la voiture ne bouge pas) : gère l'ouverture des barrières */
+  function crApply(L, P, i, back, g) {
+    const r = crSlide(L, P, i, g, back);
+    if (r === null) return null;
+    const T = P.slice();
+    T[i] = r;
+    if (r >= 0 && L.buttons) {
+      const c = L.cars[i];
+      L.buttons.forEach(bt => {
+        for (let k = 0; k < c.len; k++) {
+          const x = c.h ? r + k : c.line, y = c.h ? c.line : r + k;
+          if (x === bt.x && y === bt.y) T[L.cars.length] = (T[L.cars.length] || 0) | (1 << bt.bar);
+        }
+      });
+    }
+    return T;
+  }
+  const crStart = L => L.cars.map(c => c.pos).concat([0]);
+  /* exploration complète depuis P (les voitures n'avancent que vers l'avant : graphe fini) ;
+   * win[s] = coups minimum jusqu'à la victoire depuis l'état s (−1 = impasse) */
+  function crAnalyse(L, P, cap) {
+    P = P || crStart(L);
+    const n = L.cars.length, key = Q => Q.join(','), idx = new Map([[key(P), 0]]), S = [P], E = [];
+    for (let s = 0; s < S.length; s++) {
+      if (S.length > (cap || 300000)) return null;
+      const Q = S[s], g = crOcc(L, Q), out = [];
+      for (let i = 0; i < n; i++) {
+        if (Q[i] < 0) continue;
+        const T = crApply(L, Q, i, false, g);
+        if (!T) continue;
+        const k = key(T);
+        let t = idx.get(k);
+        if (t === undefined) { t = S.length; idx.set(k, t); S.push(T); }
+        out.push([i, t]);
+      }
+      E.push(out);
+    }
+    const win = new Int32Array(S.length).fill(-1), rev = Array.from({ length: S.length }, () => []);
+    E.forEach((out, s) => out.forEach(([, t]) => rev[t].push(s)));
+    let q = [];
+    S.forEach((Q, s) => { let all = true; for (let i = 0; i < n; i++) if (Q[i] >= 0) { all = false; break; } if (all) { win[s] = 0; q.push(s); } });
+    while (q.length) { const nq = []; for (const t of q) for (const s of rev[t]) if (win[s] < 0) { win[s] = win[t] + 1; nq.push(s); } q = nq; }
+    return { opt: win[0], solvable: win[0] >= 0, S, E, win, states: S.length };
+  }
+  /* meilleur coup depuis P : { left: coups restants au mieux (Infinity = impasse), car } */
+  function crBest(L, P) {
+    const A = crAnalyse(L, P, 200000);
+    if (!A || A.win[0] < 0) return { left: Infinity, car: null };
+    const mv = A.E[0].find(([, t]) => A.win[t] === A.win[0] - 1);
+    return { left: A.win[0], car: mv ? mv[0] : null };
+  }
+
+  const api = { MAX_LEVEL, PALETTE_SIZE, PZ_N, generate, solve, rounds, pathOf, cellIdx, makeGrid, params, pzSolve, crOcc, crSlide, crApply, crStart, crAnalyse, crBest };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.CarEngine = api;
 })(typeof window !== 'undefined' ? window : this);

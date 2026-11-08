@@ -12,7 +12,9 @@
     "screenshot": "node tools/screenshot.js",
     "verify:daily": "node tests/verify-daily.js",
     "daily:search": "node tools/gen_daily.js 1 1200 30",
-    "daily:select": "node tools/select_daily.js"
+    "daily:select": "node tools/select_daily.js",
+    "verify:course": "node tests/verify-course.js",
+    "course:gen": "node tools/gen_course.js 1 75 8 && node tools/gen_course.js merge"
   },
   "devDependencies": {
     "playwright": "^1.48.0"

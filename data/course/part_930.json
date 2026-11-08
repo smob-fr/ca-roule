@@ -1,0 +1,1 @@
+[{"n":30,"city":2,"hard":true,"W":6,"H":7,"opt":9,"naive":15,"gates":[["T",4,"any"],["R",6,"any"],["B",2,"yellow"],["L",1,"blue"]],"bars":[],"buttons":[],"cars":[[1,6,0,2,1,"blue"],[0,2,0,2,1,"yellow"],[0,2,3,2,1,"yellow"],[1,6,2,2,1,"red"],[0,4,3,2,-1,"yellow"],[0,4,5,2,-1,"blue"],[1,1,4,2,-1,"blue"]]}]
