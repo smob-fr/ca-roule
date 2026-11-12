@@ -1,0 +1,482 @@
+<title>Course : quatre pistes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Maquettes du mode Course de « Ça Roule » : un téléphone animé par piste, texte à côté (une colonne sur mobile).
+   Thème unique sombre, celui du jeu : nuit violette, accent jaune panneau. */
+:root {
+  --bg: #15173d;
+  --bg-2: #1f2259;
+  --panel: rgba(255, 255, 255, 0.07);
+  --line: rgba(255, 255, 255, 0.12);
+  --ink: #ffffff;
+  --ink-dim: rgba(222, 226, 255, 0.74);
+  --sign: #ffc933;
+  --sign-deep: #f29a00;
+  --ok: #34d58a;
+  --danger: #ff4d6d;
+  --asphalt: #3a3e55;
+  --wall: #6a7194;
+  --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(120% 50% at 50% 0%, #3b3f98 0%, rgba(59, 63, 152, 0) 60%), linear-gradient(180deg, var(--bg-2), var(--bg) 40%);
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+header h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 6vw, 44px); line-height: 1.05; text-wrap: balance; }
+header h1 span { color: var(--sign); }
+header p { margin: 10px 0 0; max-width: 62ch; color: var(--ink-dim); }
+.piste {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  padding: 22px;
+  border-radius: 30px;
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.piste.reco { box-shadow: inset 0 0 0 2px var(--sign), 0 20px 50px rgba(255, 170, 0, 0.12); }
+@media (max-width: 720px) { .piste { grid-template-columns: minmax(0, 1fr); justify-items: center; padding: 16px; } .txt { justify-self: stretch; } }
+.txt { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.tag { align-self: flex-start; font-size: 12px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+.reco .tag { color: var(--sign); }
+.txt h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 28px; line-height: 1.1; text-wrap: balance; }
+.txt p { margin: 0; color: var(--ink-dim); max-width: 60ch; }
+.txt ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.txt li::marker { color: var(--sign); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fact { padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.25); box-shadow: inset 0 0 0 1px var(--line); font-size: 13px; color: var(--ink-dim); }
+.fact b { color: var(--ink); }
+.replay { align-self: flex-start; border: 0; border-radius: 14px; padding: 9px 16px; cursor: pointer; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: #4a2a00; background: linear-gradient(180deg, #ffe27a, var(--sign) 55%, var(--sign-deep)); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6); }
+.replay:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* ---------- téléphone ---------- */
+.phone { width: 300px; max-width: 100%; border-radius: 40px; padding: 10px; background: #0b0c22; box-shadow: 0 0 0 2px #2c2f5e, 0 30px 60px rgba(0, 0, 0, 0.5); }
+.screen { position: relative; border-radius: 31px; overflow: hidden; background: radial-gradient(120% 60% at 50% -8%, #3b3f98 0%, rgba(59, 63, 152, 0) 62%), linear-gradient(180deg, #1f2259, #0f1130); padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 10px; min-height: 560px; }
+.hud { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.chip { padding: 5px 11px 6px; border-radius: 14px; background: linear-gradient(180deg, #ffe27a, var(--sign) 50%, var(--sign-deep)); color: #4a2a00; line-height: 1; }
+.chip small { display: block; font-size: 8px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; }
+.chip b { font-family: var(--font-display); font-size: 22px; }
+.counter { text-align: center; line-height: 1; }
+.counter b { display: block; font-family: var(--font-display); font-size: 26px; font-variant-numeric: tabular-nums; }
+.counter span { font-size: 9px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
+.pill { padding: 5px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px var(--line); font-size: 12px; font-weight: 900; white-space: nowrap; }
+.stage { position: relative; flex: 1; display: grid; place-items: center; border-radius: 22px; background: rgba(255, 255, 255, 0.035); padding: 18px 10px; min-height: 0; }
+.board { position: relative; background-color: var(--asphalt); background-image: linear-gradient(to right, rgba(255, 255, 255, 0.075) 2px, transparent 2px), linear-gradient(to bottom, rgba(255, 255, 255, 0.075) 2px, transparent 2px); border-radius: 10px; }
+.board.walled { box-shadow: 0 0 0 6px var(--wall), 0 0 0 8px rgba(255, 255, 255, 0.15), 0 18px 30px rgba(5, 6, 25, 0.55); }
+.board.open { box-shadow: 0 0 0 4px var(--wall), 0 0 0 5px rgba(255, 255, 255, 0.18), 0 18px 30px rgba(5, 6, 25, 0.55); }
+.gate { position: absolute; z-index: 3; border-radius: 3px; background: var(--ok); box-shadow: 0 0 12px var(--ok); }
+.gate i { position: absolute; font-style: normal; font-size: 13px; font-weight: 900; color: var(--ok); text-shadow: 0 0 8px currentColor; }
+.gate.x { animation: gatex 0.9s ease; }
+@keyframes gatex { 30%, 60% { transform: scale(1.25); filter: brightness(1.6); } }
+.car { position: absolute; z-index: 2; transition: transform 0.55s cubic-bezier(.5, 0, .3, 1), opacity 0.4s; filter: drop-shadow(0 4px 3px rgba(4, 6, 20, 0.5)); }
+.car .in { position: absolute; transform-origin: 50% 50%; }
+.car svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.car.stuck { animation: shake 0.45s; }
+.car.dim { opacity: 0.35; }
+@keyframes shake { 20%, 60% { translate: 3px 0; } 40%, 80% { translate: -3px 0; } }
+.tap { position: absolute; z-index: 5; width: 42px; height: 42px; margin: -21px 0 0 -21px; border-radius: 50%; border: 3px solid #fff; pointer-events: none; animation: tap 0.6s ease-out forwards; }
+@keyframes tap { from { transform: scale(0.3); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
+.flag { position: absolute; z-index: 6; transform: translate(-50%, -50%); padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 900; white-space: nowrap; color: #fff; background: var(--danger); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); pointer-events: none; }
+.flag.ok { background: #1fb874; }
+.note { min-height: 64px; padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, 0.94); color: #23264f; font-size: 13.5px; font-weight: 800; line-height: 1.35; display: flex; align-items: center; gap: 10px; }
+.note .n { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #23264f; color: #fff; font-family: var(--font-display); font-size: 13px; }
+.note.bad .n { background: var(--danger); }
+.note.good .n { background: #1fb874; }
+/* file d'attente (piste 3) */
+.queue { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 16px; background: rgba(0, 0, 0, 0.25); }
+.queue small { font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); margin-right: 2px; }
+.client { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; transition: transform 0.35s, opacity 0.35s, margin 0.35s; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2); }
+.client svg { width: 16px; height: 16px; fill: rgba(255, 255, 255, 0.92); }
+.client.first { transform: scale(1.22); box-shadow: 0 0 0 3px #fff, inset 0 -3px 0 rgba(0, 0, 0, 0.2); }
+.client.gone { opacity: 0; margin-left: -34px; transform: scale(0.5); }
+.bays { position: absolute; display: flex; gap: 8px; }
+.bay { border-radius: 8px; border: 2px dashed rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.05); }
+/* grand parking (piste 4) */
+.viewport { position: relative; width: 254px; height: 330px; overflow: hidden; border-radius: 14px; box-shadow: inset 0 0 0 1px var(--line); }
+.pan { position: absolute; left: 0; top: 0; transform-origin: 0 0; animation: pan 14s ease-in-out infinite; }
+@keyframes pan { 0%, 8% { transform: translate(-6px, -6px) scale(1); } 25%, 38% { transform: translate(-160px, -40px) scale(1.55); } 55%, 68% { transform: translate(-40px, -300px) scale(1.55); } 85%, 100% { transform: translate(-6px, -6px) scale(1); } }
+.mini { position: absolute; right: 8px; bottom: 8px; z-index: 4; width: 62px; height: 83px; border-radius: 6px; background: rgba(10, 12, 35, 0.85); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3); overflow: hidden; }
+.mini .dots { position: absolute; inset: 0; }
+.mini .view { position: absolute; border: 2px solid var(--sign); border-radius: 3px; animation: miniview 14s ease-in-out infinite; }
+@keyframes miniview { 0%, 8% { left: 1px; top: 1px; width: 60px; height: 81px; } 25%, 38% { left: 24px; top: 7px; width: 37px; height: 50px; } 55%, 68% { left: 6px; top: 46px; width: 37px; height: 50px; } 85%, 100% { left: 1px; top: 1px; width: 60px; height: 81px; } }
+.zoomhint { position: absolute; left: 8px; bottom: 8px; z-index: 4; padding: 4px 8px; border-radius: 999px; background: rgba(10, 12, 35, 0.85); font-size: 11px; font-weight: 900; }
+@media (prefers-reduced-motion: reduce) { .pan, .mini .view { animation: none; } .car { transition: none; } }
+footer { color: var(--ink-dim); font-size: 14px; max-width: 70ch; }
+footer b { color: var(--ink); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Mode Course : <span>quatre pistes</span> pour lui donner du relief</h1>
+    <p>Chaque téléphone rejoue en boucle une courte partie qui montre la règle en action. Ce sont des maquettes : les grilles sont simplifiées et rien n'est encore développé dans le jeu.</p>
+  </header>
+
+  <section class="piste reco" id="p1">
+    <div class="phone"><div class="screen">
+      <div class="hud"><div class="chip"><small>Niveau</small><b>12</b></div><div class="counter"><b data-moves>0</b><span>coups · obj. 4</span></div><div class="pill">Réserve <b data-left>8</b></div></div>
+      <div class="stage"><div class="board walled" data-board></div></div>
+      <div class="note" data-note></div>
+    </div></div>
+    <div class="txt">
+      <span class="tag">Piste 1 · ma recommandation</span>
+      <h2>Sorties limitées</h2>
+      <p>Le parking est fermé par un mur, avec seulement 2 à 4 sorties vertes. Une voiture touchée avance tout droit jusqu'au premier obstacle.</p>
+      <ul>
+        <li>Si elle arrive sur une sortie, elle quitte le parking.</li>
+        <li>Sinon, elle s'arrête contre le mur ou une autre voiture et reste à sa nouvelle place.</li>
+        <li>Les voitures n'avancent que vers l'avant : une mauvaise manœuvre peut boucher une sortie pour de bon.</li>
+        <li>Un objectif en coups et des étoiles, comme au Casse-tête. Les cœurs deviennent une réserve de coups.</li>
+      </ul>
+      <div class="facts"><span class="fact">Réflexion <b>forte</b></span><span class="fact">Travail <b>≈ 2 jours</b></span><span class="fact">Niveaux <b>à régénérer</b></span></div>
+      <button class="replay" type="button" data-replay="p1">Rejouer la démo</button>
+    </div>
+  </section>
+
+  <section class="piste" id="p2">
+    <div class="phone"><div class="screen">
+      <div class="hud"><div class="chip"><small>Niveau</small><b>46</b></div><div class="counter"><b data-moves>0</b><span>coups · obj. 4</span></div><div class="pill">Réserve <b data-left>7</b></div></div>
+      <div class="stage"><div class="board walled" data-board></div></div>
+      <div class="note" data-note></div>
+    </div></div>
+    <div class="txt">
+      <span class="tag">Piste 2 · à ajouter sur la piste 1</span>
+      <h2>Sorties de couleur</h2>
+      <p>Chaque sortie a une couleur et ne laisse passer que les voitures de cette couleur. Pour les autres, c'est un mur.</p>
+      <ul>
+        <li>Il faut trier le parking et amener chaque voiture vers la bonne porte.</li>
+        <li>Une voiture arrêtée devant la mauvaise porte la bouche pour celles qui pourraient passer.</li>
+        <li>Idéal comme nouveau piège vers le niveau 40, comme les plots et les bâches aujourd'hui.</li>
+      </ul>
+      <div class="facts"><span class="fact">Réflexion <b>forte</b></span><span class="fact">Travail <b>+½ jour</b> sur la piste 1</span></div>
+      <button class="replay" type="button" data-replay="p2">Rejouer la démo</button>
+    </div>
+  </section>
+
+  <section class="piste" id="p3">
+    <div class="phone"><div class="screen">
+      <div class="hud"><div class="chip"><small>Niveau</small><b>23</b></div><div class="counter"><b data-moves>0</b><span>clients servis</span></div><div class="pill">♥ ♥ ♥</div></div>
+      <div class="queue" data-queue><small>File</small></div>
+      <div class="stage"><div class="board open" data-board></div></div>
+      <div class="note" data-note></div>
+    </div></div>
+    <div class="txt">
+      <span class="tag">Piste 3</span>
+      <h2>La file d'attente</h2>
+      <p>Des clients attendent en haut de l'écran, chacun sa couleur de voiture. On ne peut sortir que la voiture du prochain client.</p>
+      <ul>
+        <li>Les règles de sortie restent celles d'aujourd'hui : tout droit, par n'importe quel bord.</li>
+        <li>Une voiture qui gêne peut aller attendre sur l'une des 3 places du bas. Quand elles sont pleines, on est coincé.</li>
+        <li>Toucher la mauvaise couleur coûte un cœur. Il faut préparer le terrain un ou deux clients à l'avance.</li>
+      </ul>
+      <div class="facts"><span class="fact">Réflexion <b>moyenne</b></span><span class="fact">Travail <b>≈ 1 jour</b></span><span class="fact">Garde les niveaux <b>actuels</b></span></div>
+      <button class="replay" type="button" data-replay="p3">Rejouer la démo</button>
+    </div>
+  </section>
+
+  <section class="piste" id="p4">
+    <div class="phone"><div class="screen">
+      <div class="hud"><div class="chip"><small>Niveau</small><b>100</b></div><div class="counter"><b>48</b><span>voitures</span></div><div class="pill">Géant</div></div>
+      <div class="stage"><div class="viewport"><div class="pan" data-big></div><div class="mini"><div class="dots" data-mini></div><div class="view"></div></div><div class="zoomhint">Glisser · pincer</div></div></div>
+      <div class="note"><span class="n">i</span><span>Le parking est trop grand pour l'écran : on se déplace d'un doigt et on zoome à deux doigts. La mini-carte montre où l'on est.</span></div>
+    </div></div>
+    <div class="txt">
+      <span class="tag">Piste 4 · en complément</span>
+      <h2>Grand parking</h2>
+      <p>Un plateau jusqu'à 12 × 16 cases avec 40 à 80 voitures, que l'on fait glisser et que l'on zoome.</p>
+      <ul>
+        <li>Spectaculaire, mais seul, il ne règle rien : il y a toujours une voiture libre quelque part.</li>
+        <li>Prend tout son sens combiné à la piste 1 ou 3 : ici, 6 sorties seulement pour 48 voitures.</li>
+        <li>Parfait pour des « niveaux géants » tous les 25 niveaux, comme des boss.</li>
+      </ul>
+      <div class="facts"><span class="fact">Réflexion <b>selon la piste associée</b></span><span class="fact">Travail <b>≈ 1 jour</b> (glisser, zoom)</span></div>
+    </div>
+  </section>
+
+  <footer>Dis-moi quelle piste te parle, ou quelle combinaison : je développerai ensuite un <b>prototype jouable de 10 niveaux</b> à essayer sur ton téléphone avant de transformer tout le mode.</footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COL = { red: '#ef5b43', blue: '#4a90f2', yellow: '#f4b81d', green: '#62bf5d', purple: '#9a6ee0', teal: '#22b8a5', orange: '#f27f34', pink: '#ee79ac', white: '#e8e4da' };
+  let gid = 0;
+  function shade(hex, f) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
+    return 'rgb(' + (r | 0) + ',' + (g | 0) + ',' + (b | 0) + ')';
+  }
+  /* voiture vue du dessus, tournée vers la droite */
+  function carSVG(len, color) {
+    const W = len * 100, id = 'm' + (++gid), rx = 46, rw = W - 128;
+    const chev = 'M' + (rx + rw / 2 - 9) + ' 37 L' + (rx + rw / 2 + 8) + ' 50 L' + (rx + rw / 2 - 9) + ' 63';
+    return '<svg viewBox="0 0 ' + W + ' 100" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + shade(color, .62) + '"/><stop offset=".34" stop-color="' + shade(color, 1.32) + '"/><stop offset=".62" stop-color="' + color + '"/><stop offset="1" stop-color="' + shade(color, .55) + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9ecff"/><stop offset=".45" stop-color="#5a8fc0"/><stop offset="1" stop-color="#1b3354"/></linearGradient></defs>' +
+      '<rect x="20" y="6" width="24" height="14" rx="6" fill="#151726"/><rect x="20" y="80" width="24" height="14" rx="6" fill="#151726"/><rect x="' + (W - 44) + '" y="6" width="24" height="14" rx="6" fill="#151726"/><rect x="' + (W - 44) + '" y="80" width="24" height="14" rx="6" fill="#151726"/>' +
+      '<rect x="5" y="11" width="' + (W - 10) + '" height="78" rx="26" fill="url(#' + id + 'b)"/>' +
+      '<path d="M' + (rx + rw) + ' 22 L' + (rx + rw + 24) + ' 28 Q' + (rx + rw + 32) + ' 50 ' + (rx + rw + 24) + ' 72 L' + (rx + rw) + ' 78 Z" fill="url(#' + id + 'g)"/>' +
+      '<path d="M' + rx + ' 25 L' + (rx - 16) + ' 30 Q' + (rx - 22) + ' 50 ' + (rx - 16) + ' 70 L' + rx + ' 75 Z" fill="url(#' + id + 'g)"/>' +
+      '<rect x="' + rx + '" y="22" width="' + rw + '" height="56" rx="14" fill="' + shade(color, 1.2) + '"/>' +
+      '<path d="' + chev + '" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<rect x="' + (W - 14) + '" y="19" width="8" height="16" rx="4" fill="#fffbe0"/><rect x="' + (W - 14) + '" y="65" width="8" height="16" rx="4" fill="#fffbe0"/>' +
+      '<rect x="6" y="21" width="6" height="16" rx="3" fill="#ff3b4f"/><rect x="6" y="63" width="6" height="16" rx="3" fill="#ff3b4f"/></svg>';
+  }
+  const ROT = { R: 0, D: 90, L: 180, U: 270 }, VEC = { R: [1, 0], L: [-1, 0], D: [0, 1], U: [0, -1] };
+  const PERSON = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7.5 8-7.5s8 3.1 8 7.5z"/></svg>';
+
+  /* ---------- petite mise en scène réutilisable ---------- */
+  function Demo(root, cfg) {
+    const board = root.querySelector('[data-board]'), note = root.querySelector('[data-note]');
+    const movesEl = root.querySelector('[data-moves]'), leftEl = root.querySelector('[data-left]');
+    const c = cfg.cell, cars = {};
+    board.style.width = cfg.W * c + 'px';
+    board.style.height = cfg.H * c + 'px';
+    board.style.backgroundSize = c + 'px ' + c + 'px';
+    if (cfg.marginBottom) board.style.marginBottom = cfg.marginBottom + 'px';
+    const gates = {};
+    (cfg.gates || []).forEach(g => {
+      const d = document.createElement('div'), col = COL[g.color] || '#34d58a';
+      d.className = 'gate';
+      d.style.background = col;
+      d.style.boxShadow = '0 0 12px ' + col;
+      const t = 6, inset = 4;
+      if (g.side === 'T') Object.assign(d.style, { left: g.at * c + inset + 'px', top: -t - 1 + 'px', width: c - inset * 2 + 'px', height: t + 'px' });
+      if (g.side === 'B') Object.assign(d.style, { left: g.at * c + inset + 'px', bottom: -t - 1 + 'px', width: c - inset * 2 + 'px', height: t + 'px' });
+      if (g.side === 'R') Object.assign(d.style, { top: g.at * c + inset + 'px', right: -t - 1 + 'px', height: c - inset * 2 + 'px', width: t + 'px' });
+      if (g.side === 'L') Object.assign(d.style, { top: g.at * c + inset + 'px', left: -t - 1 + 'px', height: c - inset * 2 + 'px', width: t + 'px' });
+      const a = document.createElement('i');
+      a.textContent = { T: '▲', B: '▼', L: '◀', R: '▶' }[g.side];
+      a.style.color = col;
+      Object.assign(a.style, g.side === 'T' ? { left: '50%', top: '-18px', transform: 'translateX(-50%)' } : g.side === 'B' ? { left: '50%', bottom: '-18px', transform: 'translateX(-50%)' } : g.side === 'R' ? { top: '50%', right: '-15px', transform: 'translateY(-50%)' } : { top: '50%', left: '-15px', transform: 'translateY(-50%)' });
+      d.appendChild(a);
+      board.appendChild(d);
+      gates[g.side + g.at] = d;
+    });
+    if (cfg.bays) {
+      const bays = document.createElement('div');
+      bays.className = 'bays';
+      bays.style.left = (cfg.W * c - (cfg.bays * c + (cfg.bays - 1) * 8)) / 2 + 'px';
+      bays.style.top = cfg.H * c + 14 + 'px';
+      for (let i = 0; i < cfg.bays; i++) { const b = document.createElement('div'); b.className = 'bay'; b.style.width = c + 'px'; b.style.height = 2 * c + 'px'; bays.appendChild(b); }
+      board.appendChild(bays);
+    }
+    cfg.cars.forEach(k => {
+      const h = k.dir === 'L' || k.dir === 'R', w = (h ? k.len : 1) * c, hh = (h ? 1 : k.len) * c;
+      const el = document.createElement('div');
+      el.className = 'car';
+      Object.assign(el.style, { left: k.x * c + 'px', top: k.y * c + 'px', width: w + 'px', height: hh + 'px' });
+      const inn = document.createElement('div');
+      inn.className = 'in';
+      Object.assign(inn.style, { width: k.len * c + 'px', height: c + 'px', left: (w - k.len * c) / 2 + 'px', top: (hh - c) / 2 + 'px', transform: 'rotate(' + ROT[k.dir] + 'deg)' });
+      inn.innerHTML = carSVG(k.len, COL[k.color]);
+      el.appendChild(inn);
+      board.appendChild(el);
+      cars[k.id] = { k, el, w, h: hh, horiz: h };
+    });
+    const queue = root.querySelector('[data-queue]');
+    let clients = [];
+    function drawQueue() {
+      if (!queue) return;
+      queue.querySelectorAll('.client').forEach(n => n.remove());
+      clients = (cfg.queue || []).map((col, i) => {
+        const d = document.createElement('span');
+        d.className = 'client' + (i === 0 ? ' first' : '');
+        d.style.background = COL[col];
+        d.innerHTML = PERSON;
+        queue.appendChild(d);
+        return d;
+      });
+    }
+    let timers = [], moves = 0;
+    const say = (n, text, mood) => { note.className = 'note' + (mood ? ' ' + mood : ''); note.innerHTML = '<span class="n">' + n + '</span><span>' + text + '</span>'; };
+    const center = (car, x, y) => [x * c + car.w / 2, y * c + car.h / 2];
+    function place(id, x, y, extra) {
+      const car = cars[id], [cx, cy] = center(car, car.k.x, car.k.y), [tx, ty] = center(car, x, y);
+      car.el.style.transform = 'translate(' + (tx - cx) + 'px,' + (ty - cy) + 'px)' + (extra || '');
+      car.x = x; car.y = y;
+    }
+    function tapFx(id) {
+      const car = cars[id], [x, y] = center(car, car.x, car.y), t = document.createElement('div');
+      t.className = 'tap';
+      t.style.left = x + 'px'; t.style.top = y + 'px';
+      board.appendChild(t);
+      setTimeout(() => t.remove(), 650);
+    }
+    function flag(id, text, ok) {
+      const car = cars[id], [x, y] = center(car, car.x, car.y), f = document.createElement('div');
+      f.className = 'flag' + (ok ? ' ok' : '');
+      f.textContent = text;
+      f.style.left = x + 'px'; f.style.top = y - car.h / 2 - 12 + 'px';
+      board.appendChild(f);
+      setTimeout(() => f.remove(), 1500);
+    }
+    function reset() {
+      Object.values(cars).forEach(car => { car.el.style.transition = 'none'; car.el.style.transform = ''; car.el.style.opacity = 1; car.el.classList.remove('dim'); car.x = car.k.x; car.y = car.k.y; });
+      void board.offsetWidth;
+      Object.values(cars).forEach(car => { car.el.style.transition = ''; });
+      moves = 0;
+      if (movesEl) movesEl.textContent = 0;
+      if (leftEl) leftEl.textContent = cfg.reserve || 0;
+      drawQueue();
+    }
+    const act = {
+      move(s) { tapFx(s.id); setTimeout(() => place(s.id, s.to[0], s.to[1]), 120); count(); },
+      exit(s) {
+        tapFx(s.id);
+        const car = cars[s.id], v = VEC[car.k.dir], far = Math.max(cfg.W, cfg.H) + 3;
+        setTimeout(() => { place(s.id, car.x + v[0] * far, car.y + v[1] * far); car.el.style.opacity = 0; }, 120);
+        if (s.gate && gates[s.gate]) setTimeout(() => { gates[s.gate].classList.remove('x'); void gates[s.gate].offsetWidth; gates[s.gate].classList.add('x'); }, 400);
+        count();
+        if (s.serve && clients.length) { const f = clients.shift(); f.classList.add('gone'); setTimeout(() => f.remove(), 400); if (clients[0]) clients[0].classList.add('first'); }
+      },
+      bay(s) { tapFx(s.id); const car = cars[s.id]; const bx = (cfg.W * c - (cfg.bays * c + (cfg.bays - 1) * 8)) / 2 + s.slot * (c + 8); const [cx, cy] = center(car, car.k.x, car.k.y); const tx = bx + c / 2, ty = cfg.H * c + 14 + c; setTimeout(() => { car.el.style.transform = 'translate(' + (tx - cx) + 'px,' + (ty - cy) + 'px)' + (car.horiz ? ' rotate(90deg)' : '') + ' scale(.92)'; }, 120); },
+      stuck(s) { tapFx(s.id); const car = cars[s.id]; car.el.classList.remove('stuck'); void car.el.offsetWidth; car.el.classList.add('stuck'); if (s.flag) flag(s.id, s.flag); if (s.count) count(); },
+      flag(s) { flag(s.id, s.text, s.ok); },
+      dim(s) { cars[s.id].el.classList.add('dim'); },
+      gate(s) { const g = gates[s.gate]; g.classList.remove('x'); void g.offsetWidth; g.classList.add('x'); },
+      reset() { reset(); }
+    };
+    function count() { moves++; if (movesEl && !cfg.serveCounter) movesEl.textContent = moves; if (leftEl) leftEl.textContent = (cfg.reserve || 0) - moves; }
+    function play() {
+      timers.forEach(clearTimeout); timers = [];
+      reset();
+      let t = 400;
+      cfg.steps.forEach((s, i) => {
+        timers.push(setTimeout(() => {
+          if (s.say) say(s.n || i + 1, s.say, s.mood);
+          if (s.do) act[s.do](s);
+          if (s.serveCount && movesEl) movesEl.textContent = s.serveCount;
+        }, t));
+        t += s.wait || 1900;
+      });
+      if (!reduce) timers.push(setTimeout(play, t + 2200));
+    }
+    return { play };
+  }
+
+  /* ---------- piste 1 : sorties limitées ---------- */
+  const demos = {};
+  demos.p1 = Demo(document.getElementById('p1'), {
+    W: 6, H: 8, cell: 38, reserve: 8,
+    gates: [{ side: 'T', at: 4 }, { side: 'R', at: 3 }, { side: 'B', at: 1 }],
+    cars: [
+      { id: 'E', x: 0, y: 0, len: 2, dir: 'R', color: 'purple' },
+      { id: 'B', x: 4, y: 1, len: 2, dir: 'U', color: 'red' },
+      { id: 'A', x: 0, y: 3, len: 2, dir: 'R', color: 'blue' },
+      { id: 'C', x: 3, y: 3, len: 2, dir: 'U', color: 'yellow' },
+      { id: 'D', x: 1, y: 5, len: 2, dir: 'D', color: 'green' },
+      { id: 'F', x: 3, y: 6, len: 3, dir: 'L', color: 'teal' }
+    ],
+    steps: [
+      { say: 'Trois sorties vertes seulement. Touchons d\'abord la violette…', n: 'i', wait: 2200 },
+      { do: 'move', id: 'E', to: [4, 0], say: 'Pas de sortie sur sa ligne : elle file jusqu\'au mur et s\'y arrête.', n: 1 },
+      { do: 'stuck', id: 'B', flag: 'Bloquée !', count: true, say: 'Aïe : la violette bouche la sortie du haut. La rouge ne pourra plus jamais sortir.', n: 2, mood: 'bad', wait: 2600 },
+      { do: 'reset', say: 'On recommence, dans le bon ordre.', n: '↺', wait: 1500 },
+      { do: 'exit', id: 'B', gate: 'T4', say: 'La rouge d\'abord : voie libre jusqu\'à la sortie du haut.', n: 1, mood: 'good' },
+      { do: 'move', id: 'C', to: [3, 0], say: 'La jaune avance jusqu\'au mur… et libère la ligne de la bleue.', n: 2 },
+      { do: 'exit', id: 'A', gate: 'R3', say: 'La bleue file droit vers la sortie de droite.', n: 3, mood: 'good' },
+      { do: 'exit', id: 'D', gate: 'B1', say: 'La verte sort par le bas. 4 coups : objectif atteint, 3 étoiles !', n: 4, mood: 'good', wait: 2600 }
+    ]
+  });
+
+  /* ---------- piste 2 : sorties de couleur ---------- */
+  demos.p2 = Demo(document.getElementById('p2'), {
+    W: 6, H: 8, cell: 38, reserve: 7,
+    gates: [{ side: 'T', at: 2, color: 'blue' }, { side: 'R', at: 4, color: 'yellow' }, { side: 'B', at: 4, color: 'red' }],
+    cars: [
+      { id: 'R', x: 4, y: 1, len: 2, dir: 'D', color: 'red' },
+      { id: 'Bl', x: 2, y: 3, len: 2, dir: 'U', color: 'blue' },
+      { id: 'Y', x: 0, y: 4, len: 2, dir: 'R', color: 'yellow' },
+      { id: 'Y2', x: 1, y: 6, len: 2, dir: 'R', color: 'yellow' },
+      { id: 'G', x: 0, y: 0, len: 2, dir: 'D', color: 'green' }
+    ],
+    steps: [
+      { say: 'Chaque sortie a sa couleur. Les autres voitures la prennent pour un mur.', n: 'i', wait: 2300 },
+      { do: 'exit', id: 'R', gate: 'B4', say: 'La rouge descend jusqu\'à la porte rouge : elle sort.', n: 1, mood: 'good' },
+      { do: 'exit', id: 'Bl', gate: 'T2', say: 'La bleue remonte vers la porte bleue.', n: 2, mood: 'good' },
+      { do: 'exit', id: 'Y', gate: 'R4', say: 'La voie est libre : la jaune rejoint la porte jaune.', n: 3, mood: 'good' },
+      { do: 'move', id: 'Y2', to: [4, 6], say: 'Cette jaune-là n\'a pas de porte jaune sur sa ligne : elle s\'arrête au mur.', n: 4, wait: 2300 },
+      { do: 'move', id: 'G', to: [0, 6], say: 'La verte descend… pas de porte verte en bas : il faudra la ramener ailleurs.', n: 5, wait: 2600 }
+    ]
+  });
+
+  /* ---------- piste 3 : file d'attente ---------- */
+  demos.p3 = Demo(document.getElementById('p3'), {
+    W: 6, H: 6, cell: 38, bays: 3, marginBottom: 100, serveCounter: true,
+    queue: ['yellow', 'blue', 'green', 'red', 'yellow'],
+    cars: [
+      { id: 'Y', x: 1, y: 1, len: 2, dir: 'U', color: 'yellow' },
+      { id: 'Gr', x: 0, y: 0, len: 2, dir: 'R', color: 'green' },
+      { id: 'Bl', x: 3, y: 3, len: 2, dir: 'R', color: 'blue' },
+      { id: 'R', x: 5, y: 2, len: 2, dir: 'D', color: 'red' },
+      { id: 'Pk', x: 0, y: 4, len: 2, dir: 'R', color: 'pink' }
+    ],
+    steps: [
+      { say: 'Le premier client veut la jaune. Mais la verte lui barre la route.', n: 'i', wait: 2300 },
+      { do: 'stuck', id: 'R', flag: '−1 ♥', say: 'Toucher la rouge ? Ce n\'est pas son tour : un cœur perdu.', n: 1, mood: 'bad', wait: 2200 },
+      { do: 'bay', id: 'Gr', slot: 0, say: 'On envoie la verte attendre sur une place du bas.', n: 2 },
+      { do: 'exit', id: 'Y', serve: true, serveCount: 1, say: 'La jaune sort : client servi !', n: 3, mood: 'good' },
+      { do: 'exit', id: 'Bl', serve: true, serveCount: 2, say: 'Au tour de la bleue, voie libre.', n: 4, mood: 'good' },
+      { do: 'flag', id: 'Gr', text: 'Son tour !', ok: true, say: 'Le client suivant veut la verte : elle repart directement de sa place.', n: 5, mood: 'good', wait: 2400 }
+    ]
+  });
+
+  /* ---------- piste 4 : grand parking (décor seulement) ---------- */
+  (function big() {
+    const W = 12, H = 16, c = 22, pan = document.querySelector('[data-big]'), mini = document.querySelector('[data-mini]');
+    pan.innerHTML = '<div class="board walled" style="width:' + W * c + 'px;height:' + H * c + 'px;background-size:' + c + 'px ' + c + 'px;margin:6px"></div>';
+    const board = pan.firstChild;
+    let s = 7;
+    const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
+    const used = new Set(), cols = Object.keys(COL);
+    let n = 0;
+    for (let t = 0; t < 900 && n < 48; t++) {
+      const len = rnd() < 0.25 ? 3 : 2, h = rnd() < 0.5, x = (rnd() * (h ? W - len + 1 : W)) | 0, y = (rnd() * (h ? H : H - len + 1)) | 0;
+      const cells = [];
+      for (let i = 0; i < len; i++) cells.push(h ? (y * W + x + i) : ((y + i) * W + x));
+      if (cells.some(k => used.has(k))) continue;
+      cells.forEach(k => used.add(k));
+      n++;
+      const dir = h ? (rnd() < 0.5 ? 'R' : 'L') : (rnd() < 0.5 ? 'U' : 'D'), col = COL[cols[(rnd() * cols.length) | 0]];
+      const w = (h ? len : 1) * c, hh = (h ? 1 : len) * c, el = document.createElement('div');
+      el.className = 'car';
+      Object.assign(el.style, { left: x * c + 'px', top: y * c + 'px', width: w + 'px', height: hh + 'px' });
+      el.innerHTML = '<div class="in" style="width:' + len * c + 'px;height:' + c + 'px;left:' + (w - len * c) / 2 + 'px;top:' + (hh - c) / 2 + 'px;transform:rotate(' + ROT[dir] + 'deg)">' + carSVG(len, col) + '</div>';
+      board.appendChild(el);
+      const d = document.createElement('i');
+      Object.assign(d.style, { position: 'absolute', left: x * 5 + 1 + 'px', top: y * 5 + 1 + 'px', width: w / c * 5 - 1 + 'px', height: hh / c * 5 - 1 + 'px', background: col, borderRadius: '1px' });
+      mini.appendChild(d);
+    }
+    [['T', 3], ['T', 9], ['R', 5], ['R', 12], ['B', 2], ['L', 8]].forEach(([side, at]) => {
+      const g = document.createElement('div');
+      g.className = 'gate';
+      const t = 6, k = 3;
+      if (side === 'T') Object.assign(g.style, { left: at * c + k + 'px', top: -t - 1 + 'px', width: c - 2 * k + 'px', height: t + 'px' });
+      if (side === 'B') Object.assign(g.style, { left: at * c + k + 'px', bottom: -t - 1 + 'px', width: c - 2 * k + 'px', height: t + 'px' });
+      if (side === 'R') Object.assign(g.style, { top: at * c + k + 'px', right: -t - 1 + 'px', height: c - 2 * k + 'px', width: t + 'px' });
+      if (side === 'L') Object.assign(g.style, { top: at * c + k + 'px', left: -t - 1 + 'px', height: c - 2 * k + 'px', width: t + 'px' });
+      board.appendChild(g);
+    });
+  })();
+
+  Object.values(demos).forEach(d => d.play());
+  document.querySelectorAll('[data-replay]').forEach(b => b.addEventListener('click', () => demos[b.dataset.replay].play()));
+})();
+</script>

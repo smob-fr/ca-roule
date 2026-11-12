@@ -1,0 +1,361 @@
+<title>Sorties limitées : niveau test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Prototype jouable d'un niveau « Sorties limitées » de Ça Roule : téléphone à gauche, explications à droite (une colonne sur mobile).
+   Thème unique sombre, celui du jeu. */
+:root {
+  --bg: #15173d;
+  --bg-2: #1f2259;
+  --panel: rgba(255, 255, 255, 0.07);
+  --line: rgba(255, 255, 255, 0.12);
+  --ink: #ffffff;
+  --ink-dim: rgba(222, 226, 255, 0.74);
+  --sign: #ffc933;
+  --sign-deep: #f29a00;
+  --ok: #34d58a;
+  --danger: #ff4d6d;
+  --asphalt: #3a3e55;
+  --wall: #6a7194;
+  --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: radial-gradient(120% 50% at 50% 0%, #3b3f98 0%, rgba(59, 63, 152, 0) 60%), linear-gradient(180deg, var(--bg-2), var(--bg) 45%); background-color: var(--bg); color: var(--ink); font-family: var(--font-body); font-weight: 700; font-size: 15px; line-height: 1.5; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 40px; }
+.wrap { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 32px; align-items: start; }
+@media (max-width: 760px) { .wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; } .side { justify-self: stretch; } }
+.phone { width: 340px; max-width: 100%; border-radius: 42px; padding: 10px; background: #0b0c22; box-shadow: 0 0 0 2px #2c2f5e, 0 30px 60px rgba(0, 0, 0, 0.5); }
+.screen { position: relative; border-radius: 33px; overflow: hidden; background: radial-gradient(120% 60% at 50% -8%, #3b3f98 0%, rgba(59, 63, 152, 0) 62%), linear-gradient(180deg, #1f2259, #0f1130); padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+.hud { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.chip { padding: 5px 11px 6px; border-radius: 14px; background: linear-gradient(180deg, #ffe27a, var(--sign) 50%, var(--sign-deep)); color: #4a2a00; line-height: 1; }
+.chip small { display: block; font-size: 8px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; }
+.chip b { font-family: var(--font-display); font-size: 22px; }
+.counter { text-align: center; line-height: 1; }
+.counter b { display: block; font-family: var(--font-display); font-size: 30px; font-variant-numeric: tabular-nums; }
+.counter span { font-size: 10px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); }
+.stars { display: flex; gap: 2px; padding: 5px 9px; border-radius: 999px; background: rgba(255, 255, 255, 0.09); box-shadow: inset 0 0 0 1px var(--line); }
+.stars i { font-style: normal; font-size: 17px; line-height: 1; color: rgba(255, 255, 255, 0.18); transition: color 0.2s; }
+.stars i.on { color: var(--sign); text-shadow: 0 0 8px rgba(255, 180, 0, 0.5); }
+.fuel { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 900; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+.fuel .bar { flex: 1; height: 8px; border-radius: 99px; background: rgba(0, 0, 0, 0.3); overflow: hidden; }
+.fuel .bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ffe27a, #ffb21a); transition: width 0.3s; }
+.fuel.low .bar i { background: linear-gradient(90deg, #ff8a8a, #ff3355); }
+.stage { position: relative; display: grid; place-items: center; padding: 30px 0; overflow: hidden; border-radius: 22px; background: rgba(255, 255, 255, 0.035); }
+.board { position: relative; background-color: var(--asphalt); background-image: linear-gradient(to right, rgba(255, 255, 255, 0.075) 2px, transparent 2px), linear-gradient(to bottom, rgba(255, 255, 255, 0.075) 2px, transparent 2px); border-radius: 10px; box-shadow: 0 0 0 6px var(--wall), 0 0 0 8px rgba(255, 255, 255, 0.15), 0 18px 30px rgba(5, 6, 25, 0.55); }
+.gate { position: absolute; z-index: 3; border-radius: 3px; }
+.gate i { position: absolute; font-style: normal; font-size: 13px; font-weight: 900; text-shadow: 0 0 8px currentColor; }
+.gate.flash { animation: flash 0.7s ease; }
+.mark { position: absolute; z-index: 1; pointer-events: none; opacity: 0.55; display: grid; place-items: center; }
+.mark svg { width: 70%; height: 70%; }
+@keyframes flash { 40% { filter: brightness(1.8); transform: scale(1.3); } }
+.car { position: absolute; z-index: 2; border: 0; padding: 0; background: none; cursor: pointer; filter: drop-shadow(0 4px 3px rgba(4, 6, 20, 0.5)); transition-property: transform, opacity; transition-timing-function: cubic-bezier(.45, 0, .3, 1); -webkit-tap-highlight-color: transparent; }
+.car:focus-visible { outline: 3px solid var(--sign); outline-offset: -2px; border-radius: 12px; }
+.car .in { position: absolute; transform-origin: 50% 50%; pointer-events: none; }
+.car svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.car.nope { animation: nope 0.4s; }
+@keyframes nope { 20%, 60% { translate: 3px 0; } 40%, 80% { translate: -3px 0; } }
+.car.hint { animation: hint 0.9s ease-in-out infinite; }
+@keyframes hint { 50% { filter: drop-shadow(0 0 12px var(--sign)) brightness(1.2); } }
+.note { min-height: 58px; padding: 10px 12px; border-radius: 16px; background: rgba(255, 255, 255, 0.94); color: #23264f; font-size: 13.5px; font-weight: 800; line-height: 1.35; display: flex; align-items: center; }
+.note.bad { background: #ffe1e6; color: #7a0f26; }
+.note.good { background: #d9f7e8; color: #0d5a37; }
+.tools { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.btn { min-height: 46px; border: 0; border-radius: 16px; cursor: pointer; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: #fff; background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07)); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14); }
+.btn.primary { color: #4a2a00; background: linear-gradient(180deg, #ffe27a, var(--sign) 55%, var(--sign-deep)); box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.6); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.side { min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+.side h1 { margin: 0; font-family: var(--font-display); font-size: clamp(28px, 5vw, 40px); line-height: 1.05; text-wrap: balance; }
+.side h1 span { color: var(--sign); }
+.side h2 { margin: 0; font-family: var(--font-display); font-size: 20px; }
+.side p { margin: 0; color: var(--ink-dim); max-width: 62ch; }
+.box { padding: 16px 18px; border-radius: 22px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 10px; }
+.box ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.box li::marker { color: var(--sign); }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 13.5px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 22px; height: 7px; border-radius: 3px; }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.fig { padding: 12px 14px; border-radius: 18px; background: rgba(0, 0, 0, 0.22); }
+.fig b { display: block; font-family: var(--font-display); font-size: 28px; line-height: 1.1; color: var(--sign); font-variant-numeric: tabular-nums; }
+.fig span { font-size: 13px; color: var(--ink-dim); }
+</style>
+
+<div class="wrap">
+  <div class="phone"><div class="screen">
+    <div class="hud">
+      <div class="chip"><small>Niveau</small><b>24</b></div>
+      <div class="counter"><b id="moves">0</b><span>coups · objectif <b style="display:inline;font-size:inherit;font-family:inherit" id="opt">13</b></span></div>
+      <div class="stars" id="stars" aria-label="Étoiles"><i>★</i><i>★</i><i>★</i></div>
+    </div>
+    <div class="fuel" id="fuel"><span>Réserve</span><div class="bar"><i id="fuel-bar"></i></div><span id="fuel-n">16</span></div>
+    <div class="stage"><div class="board" id="board"></div></div>
+    <div class="note" id="note" role="status"></div>
+    <div class="tools">
+      <button class="btn" id="undo" type="button" disabled>Annuler</button>
+      <button class="btn" id="restart" type="button">Recommencer</button>
+      <button class="btn primary" id="hint" type="button">Indice</button>
+    </div>
+  </div></div>
+
+  <div class="side">
+    <h1>Sorties limitées : <span>un niveau moyen</span> à essayer</h1>
+    <p>Touche une voiture : elle avance tout droit jusqu'au premier obstacle. Elle quitte le parking seulement si elle arrive face à une porte qu'elle a le droit de prendre.</p>
+    <div class="box">
+      <h2>Les portes</h2>
+      <div class="legend">
+        <span><i style="background:repeating-linear-gradient(45deg,#ef5b43 0 6px,#4a90f2 6px 12px,#f4b81d 12px 18px)"></i>Rayée : toutes les couleurs</span>
+        <span><i style="background:#ef5b43"></i>Rouge</span>
+        <span><i style="background:#4a90f2"></i>Bleue</span>
+        <span><i style="background:#f4b81d"></i>Jaune</span>
+      </div>
+      <p>Une voiture qui arrive devant une porte d'une autre couleur s'y arrête comme contre un mur. Elle reste alors garée là et peut gêner les autres.</p>
+    </div>
+    <div class="box">
+      <h2>Pourquoi il faut réfléchir</h2>
+      <ul>
+        <li>Devant chaque porte, une flèche peinte au sol rappelle quelles voitures peuvent passer.</li>
+        <li>Certaines voitures se bloquent mutuellement en cercle. Pour s'en sortir, il faut en avancer une à moitié, contre une autre voiture, pour libérer la voie. Ici, il faut 3 de ces manœuvres.</li>
+        <li>Les voitures n'avancent jamais en arrière : une voiture garée au mauvais endroit peut condamner une sortie.</li>
+        <li>La réserve est de 16 coups pour un objectif de 13 : on peut se tromper, mais pas trop.</li>
+      </ul>
+    </div>
+    <div class="figs">
+      <div class="fig"><b>13</b><span>coups au minimum, vérifiés par le solveur</span></div>
+      <div class="fig"><b>1 sur 2</b><span>joueurs qui sortent tout ce qu'ils peuvent finissent dans une impasse</span></div>
+      <div class="fig"><b>8 %</b><span>de ces joueurs atteignent l'objectif de 13 coups</span></div>
+    </div>
+    <p>Les chiffres viennent de 1000 parties simulées d'un joueur qui sort toujours une voiture quand il le peut, et bouge une voiture au hasard sinon.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const LEVEL = {"W":6,"H":8,"gates":[{"side":"R","at":7,"color":"any"},{"side":"R","at":6,"color":"any"},{"side":"T","at":3,"color":"blue"},{"side":"B","at":0,"color":"red"},{"side":"L","at":1,"color":"yellow"},{"side":"L","at":2,"color":"blue"}],"cars":[{"h":true,"line":1,"pos":2,"len":3,"dir":-1,"color":"yellow"},{"h":true,"line":2,"pos":4,"len":2,"dir":-1,"color":"blue"},{"h":false,"line":3,"pos":3,"len":2,"dir":-1,"color":"blue"},{"h":false,"line":0,"pos":3,"len":3,"dir":1,"color":"red"},{"h":false,"line":0,"pos":1,"len":2,"dir":1,"color":"red"},{"h":false,"line":3,"pos":5,"len":2,"dir":-1,"color":"blue"},{"h":true,"line":2,"pos":2,"len":2,"dir":-1,"color":"blue"},{"h":true,"line":7,"pos":3,"len":3,"dir":1,"color":"red"},{"h":true,"line":6,"pos":0,"len":3,"dir":1,"color":"red"},{"h":true,"line":7,"pos":0,"len":2,"dir":1,"color":"blue"}]};
+  const OPT = 13, RESERVE = 16;
+  const COL = { red: '#ef5b43', blue: '#4a90f2', yellow: '#f4b81d', any: '#ffffff' };
+  const ANY_BG = 'repeating-linear-gradient(45deg, #ef5b43 0 6px, #4a90f2 6px 12px, #f4b81d 12px 18px)';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = id => document.getElementById(id);
+
+  /* ---------- règle ---------- */
+  const L = LEVEL;
+  const gateAt = (side, line) => L.gates.find(g => g.side === side && g.at === line);
+  function occ(P) {
+    const g = new Int8Array(L.W * L.H).fill(-1);
+    L.cars.forEach((c, i) => { if (P[i] < 0) return; for (let k = 0; k < c.len; k++) g[c.h ? c.line * L.W + P[i] + k : (P[i] + k) * L.W + c.line] = i; });
+    return g;
+  }
+  /* nouvelle position, -1 si la voiture sort, null si elle ne peut pas bouger */
+  function slide(P, i, g) {
+    const c = L.cars[i], N = c.h ? L.W : L.H;
+    g = g || occ(P);
+    let p = P[i];
+    for (;;) {
+      const front = c.dir > 0 ? p + c.len : p - 1;
+      if (front < 0 || front >= N) {
+        const gt = gateAt(c.h ? (c.dir > 0 ? 'R' : 'L') : (c.dir > 0 ? 'B' : 'T'), c.line);
+        if (gt && (gt.color === 'any' || gt.color === c.color)) return -1;
+        break;
+      }
+      if (g[c.h ? c.line * L.W + front : front * L.W + c.line] >= 0) break;
+      p += c.dir;
+    }
+    return p === P[i] ? null : p;
+  }
+  /* meilleur nombre de coups restants depuis P (Infinity = impasse) et le meilleur coup */
+  function best(P) {
+    const key = Q => Q.join(','), idx = new Map([[key(P), 0]]), S = [P], E = [];
+    for (let s = 0; s < S.length; s++) {
+      const Q = S[s], g = occ(Q), out = [];
+      for (let i = 0; i < Q.length; i++) {
+        if (Q[i] < 0) continue;
+        const r = slide(Q, i, g);
+        if (r === null) continue;
+        const T = Q.slice(); T[i] = r;
+        const k = key(T);
+        let t = idx.get(k);
+        if (t === undefined) { t = S.length; idx.set(k, t); S.push(T); }
+        out.push([i, t]);
+      }
+      E.push(out);
+    }
+    const n = S.length, d = new Int32Array(n).fill(-1), goal = S.findIndex(Q => Q.every(x => x < 0));
+    if (goal < 0) return { left: Infinity };
+    const rev = Array.from({ length: n }, () => []);
+    E.forEach((out, s) => out.forEach(([, t]) => rev[t].push(s)));
+    d[goal] = 0;
+    let q = [goal];
+    while (q.length) { const nq = []; for (const t of q) for (const s of rev[t]) if (d[s] < 0) { d[s] = d[t] + 1; nq.push(s); } q = nq; }
+    if (d[0] < 0) return { left: Infinity };
+    const mv = E[0].find(([, t]) => d[t] === d[0] - 1);
+    return { left: d[0], car: mv ? mv[0] : null };
+  }
+
+  /* ---------- dessin ---------- */
+  let gid = 0;
+  function shade(hex, f) {
+    const n = parseInt(hex.slice(1), 16);
+    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    if (f < 1) { r *= f; g *= f; b *= f; } else { const k = f - 1; r += (255 - r) * k; g += (255 - g) * k; b += (255 - b) * k; }
+    return 'rgb(' + (r | 0) + ',' + (g | 0) + ',' + (b | 0) + ')';
+  }
+  function carSVG(len, color) {
+    const W = len * 100, id = 'c' + (++gid), rx = 46, rw = W - 128, cx = rx + rw / 2;
+    return '<svg viewBox="0 0 ' + W + ' 100" aria-hidden="true"><defs>' +
+      '<linearGradient id="' + id + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + shade(color, .62) + '"/><stop offset=".34" stop-color="' + shade(color, 1.32) + '"/><stop offset=".62" stop-color="' + color + '"/><stop offset="1" stop-color="' + shade(color, .55) + '"/></linearGradient>' +
+      '<linearGradient id="' + id + 'g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9ecff"/><stop offset=".45" stop-color="#5a8fc0"/><stop offset="1" stop-color="#1b3354"/></linearGradient></defs>' +
+      '<rect x="20" y="6" width="24" height="14" rx="6" fill="#151726"/><rect x="20" y="80" width="24" height="14" rx="6" fill="#151726"/><rect x="' + (W - 44) + '" y="6" width="24" height="14" rx="6" fill="#151726"/><rect x="' + (W - 44) + '" y="80" width="24" height="14" rx="6" fill="#151726"/>' +
+      '<rect x="5" y="11" width="' + (W - 10) + '" height="78" rx="26" fill="url(#' + id + 'b)"/>' +
+      '<path d="M' + (rx + rw) + ' 22 L' + (rx + rw + 24) + ' 28 Q' + (rx + rw + 32) + ' 50 ' + (rx + rw + 24) + ' 72 L' + (rx + rw) + ' 78 Z" fill="url(#' + id + 'g)"/>' +
+      '<path d="M' + rx + ' 25 L' + (rx - 16) + ' 30 Q' + (rx - 22) + ' 50 ' + (rx - 16) + ' 70 L' + rx + ' 75 Z" fill="url(#' + id + 'g)"/>' +
+      '<rect x="' + rx + '" y="22" width="' + rw + '" height="56" rx="14" fill="' + shade(color, 1.2) + '"/>' +
+      '<path d="M' + (cx - 9) + ' 37 L' + (cx + 8) + ' 50 L' + (cx - 9) + ' 63" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<rect x="' + (W - 14) + '" y="19" width="8" height="16" rx="4" fill="#fffbe0"/><rect x="' + (W - 14) + '" y="65" width="8" height="16" rx="4" fill="#fffbe0"/></svg>';
+  }
+  const board = $('board'), cell = 44, nodes = [], gateEls = {};
+  board.insertAdjacentHTML('beforeend', '<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="anyg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ef5b43"/><stop offset=".5" stop-color="#4a90f2"/><stop offset="1" stop-color="#f4b81d"/></linearGradient></defs></svg>');
+  board.style.width = L.W * cell + 'px';
+  board.style.height = L.H * cell + 'px';
+  board.style.backgroundSize = cell + 'px ' + cell + 'px';
+  L.gates.forEach(g => {
+    const d = document.createElement('div'), col = COL[g.color], t = 7, k = 5;
+    d.className = 'gate';
+    d.style.background = g.color === 'any' ? ANY_BG : col;
+    d.style.boxShadow = '0 0 12px ' + (g.color === 'any' ? 'rgba(255,255,255,.7)' : col);
+    if (g.side === 'T') Object.assign(d.style, { left: g.at * cell + k + 'px', top: -t - 1 + 'px', width: cell - 2 * k + 'px', height: t + 'px' });
+    if (g.side === 'B') Object.assign(d.style, { left: g.at * cell + k + 'px', bottom: -t - 1 + 'px', width: cell - 2 * k + 'px', height: t + 'px' });
+    if (g.side === 'R') Object.assign(d.style, { top: g.at * cell + k + 'px', right: -t - 1 + 'px', height: cell - 2 * k + 'px', width: t + 'px' });
+    if (g.side === 'L') Object.assign(d.style, { top: g.at * cell + k + 'px', left: -t - 1 + 'px', height: cell - 2 * k + 'px', width: t + 'px' });
+    const a = document.createElement('i');
+    a.textContent = { T: '▲', B: '▼', L: '◀', R: '▶' }[g.side];
+    a.style.color = col;
+    Object.assign(a.style, g.side === 'T' ? { left: '50%', top: '-19px', transform: 'translateX(-50%)' } : g.side === 'B' ? { left: '50%', bottom: '-19px', transform: 'translateX(-50%)' } : g.side === 'R' ? { top: '50%', right: '-16px', transform: 'translateY(-50%)' } : { top: '50%', left: '-16px', transform: 'translateY(-50%)' });
+    d.appendChild(a);
+    board.appendChild(d);
+    gateEls[g.side + g.at] = d;
+    /* flèche peinte au sol sur la case devant la porte */
+    const m = document.createElement('div'), x = g.side === 'L' ? 0 : g.side === 'R' ? L.W - 1 : g.at, y = g.side === 'T' ? 0 : g.side === 'B' ? L.H - 1 : g.at;
+    m.className = 'mark' + (g.color === 'any' ? ' any' : '');
+    Object.assign(m.style, { left: x * cell + 'px', top: y * cell + 'px', width: cell + 'px', height: cell + 'px', color: col, transform: 'rotate(' + { R: 0, B: 90, L: 180, T: 270 }[g.side] + 'deg)' });
+    m.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M9 12 L19 20 L9 28 M19 12 L29 20 L19 28" fill="none" stroke="' + (g.color === 'any' ? 'url(#anyg)' : 'currentColor') + '" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    board.appendChild(m);
+  });
+  const NAMES = { red: 'rouge', blue: 'bleue', yellow: 'jaune' };
+  const DIRS = c => (c.h ? (c.dir > 0 ? 'vers la droite' : 'vers la gauche') : (c.dir > 0 ? 'vers le bas' : 'vers le haut'));
+  L.cars.forEach((c, i) => {
+    const w = (c.h ? c.len : 1) * cell, h = (c.h ? 1 : c.len) * cell, b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'car';
+    b.setAttribute('aria-label', 'Voiture ' + NAMES[c.color] + ' ' + DIRS(c));
+    Object.assign(b.style, { width: w + 'px', height: h + 'px', left: (c.h ? c.pos : c.line) * cell + 'px', top: (c.h ? c.line : c.pos) * cell + 'px' });
+    const rot = c.h ? (c.dir > 0 ? 0 : 180) : (c.dir > 0 ? 90 : 270);
+    b.innerHTML = '<span class="in" style="width:' + c.len * cell + 'px;height:' + cell + 'px;left:' + (w - c.len * cell) / 2 + 'px;top:' + (h - cell) / 2 + 'px;transform:rotate(' + rot + 'deg)">' + carSVG(c.len, COL[c.color]) + '</span>';
+    b.addEventListener('click', () => tap(i));
+    board.appendChild(b);
+    nodes.push(b);
+  });
+
+  /* ---------- partie ---------- */
+  let P, hist, over;
+  const say = (text, mood) => { const n = $('note'); n.className = 'note' + (mood ? ' ' + mood : ''); n.textContent = text; };
+  function draw(i, anim) {
+    const c = L.cars[i], b = nodes[i], p = P[i], N = c.h ? L.W : L.H;
+    const tr = q => (c.h ? 'translateX(' : 'translateY(') + (q - c.pos) * cell + 'px)';
+    b.getAnimations().forEach(a => a.cancel());
+    b.style.pointerEvents = p < 0 ? 'none' : '';
+    b.tabIndex = p < 0 ? -1 : 0;
+    if (p >= 0 || anim == null || reduce) {
+      /* arrêt contre un obstacle (ou remise en place sans animation) */
+      const dist = anim == null ? 0 : Math.abs(p - anim);
+      b.style.transition = anim == null || reduce ? 'none' : 'transform ' + Math.min(0.6, 0.14 + dist * 0.07) + 's cubic-bezier(.45, 0, .3, 1)';
+      b.style.transform = p < 0 ? tr(c.dir > 0 ? N + 4 : -c.len - 4) : tr(p);
+      b.style.opacity = p < 0 ? 0 : 1;
+      return;
+    }
+    /* sortie : elle accélère, franchit la porte et file 3 cases au-delà avant de s'effacer */
+    const edge = c.dir > 0 ? N : -c.len, far = c.dir > 0 ? N + 3 : -c.len - 3, d = Math.abs(far - anim);
+    b.style.transition = 'none';
+    b.style.transform = tr(anim);
+    const a = b.animate([
+      { transform: tr(anim), opacity: 1 },
+      { transform: tr(edge), opacity: 1, offset: Math.abs(edge - anim) / d },
+      { transform: tr(far), opacity: 0 }
+    ], { duration: 160 + d * 75, easing: 'cubic-bezier(.55, 0, .9, .5)', fill: 'forwards' });
+    a.onfinish = () => { b.style.transform = tr(far); b.style.opacity = 0; };
+  }
+  function hud() {
+    const m = hist.length;
+    $('moves').textContent = m;
+    const st = m <= OPT ? 3 : m <= OPT + 2 ? 2 : 1;
+    [...$('stars').children].forEach((s, k) => s.classList.toggle('on', k < st));
+    $('stars').setAttribute('aria-label', st + ' étoiles en jeu');
+    const left = RESERVE - m;
+    $('fuel-n').textContent = left;
+    $('fuel-bar').style.width = Math.max(0, left / RESERVE * 100) + '%';
+    $('fuel').classList.toggle('low', left <= 3);
+    $('undo').disabled = !m;
+  }
+  function start() {
+    P = L.cars.map(c => c.pos);
+    hist = [];
+    over = false;
+    nodes.forEach((n, i) => { n.classList.remove('hint'); draw(i, null); });
+    hud();
+    say('Fais sortir les 10 voitures. Objectif : 13 coups.');
+  }
+  function clearHint() { nodes.forEach(n => n.classList.remove('hint')); }
+  function tap(i) {
+    if (over || P[i] < 0) return;
+    clearHint();
+    const r = slide(P, i);
+    if (r === null) {
+      nodes[i].classList.remove('nope'); void nodes[i].offsetWidth; nodes[i].classList.add('nope');
+      say('Elle ne peut pas avancer : quelque chose la bloque juste devant.');
+      return;
+    }
+    const from = P[i];
+    hist.push(P.slice());
+    P[i] = r;
+    draw(i, from);
+    hud();
+    const c = L.cars[i];
+    if (r < 0) {
+      const g = gateEls[(c.h ? (c.dir > 0 ? 'R' : 'L') : (c.dir > 0 ? 'B' : 'T')) + c.line];
+      if (g) setTimeout(() => { g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash'); }, 250);
+    }
+    if (P.every(x => x < 0)) {
+      over = true;
+      const m = hist.length;
+      say(m <= OPT ? 'Parfait : ' + m + ' coups, l\'objectif est atteint. 3 étoiles !' : 'Gagné en ' + m + ' coups. Le meilleur score possible est 13 : tu peux faire mieux !', 'good');
+      return;
+    }
+    const b = best(P), m = hist.length;
+    if (b.left === Infinity) { over = true; say('Impasse : depuis cette position, plus aucune solution. Annule ou recommence.', 'bad'); return; }
+    if (m + b.left > RESERVE) { over = true; say('Panne sèche : il faudrait encore ' + b.left + ' coups, la réserve ne suffit plus. Annule ou recommence.', 'bad'); return; }
+    if (r < 0) say(m + b.left <= OPT ? 'Sortie ! Tu es toujours sur la route parfaite.' : 'Sortie. Il reste au moins ' + b.left + ' coups.');
+    else say(m + b.left <= OPT ? 'Elle avance et s\'arrête. Bien vu, c\'est encore la route parfaite.' : 'Elle avance et s\'arrête : la route parfaite est perdue, mais la partie continue.');
+  }
+  $('undo').addEventListener('click', () => {
+    if (!hist.length) return;
+    P = hist.pop();
+    over = false;
+    clearHint();
+    nodes.forEach((n, i) => draw(i, null));
+    hud();
+    say('Coup annulé.');
+  });
+  $('restart').addEventListener('click', start);
+  $('hint').addEventListener('click', () => {
+    if (over) { say('Annule ou recommence d\'abord.'); return; }
+    const b = best(P);
+    clearHint();
+    if (b.car == null) return;
+    nodes[b.car].classList.add('hint');
+    say('Essaie la voiture qui clignote. Il reste ' + b.left + ' coups au mieux.');
+  });
+  start();
+})();
+</script>
