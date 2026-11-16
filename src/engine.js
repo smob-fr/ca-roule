@@ -345,6 +345,20 @@
     while (q.length) { const nq = []; for (const t of q) for (const s of rev[t]) if (win[s] < 0) { win[s] = win[t] + 1; nq.push(s); } q = nq; }
     return { opt: win[0], solvable: win[0] >= 0, S, E, win, states: S.length };
   }
+  /* voitures condamnées depuis P : celles qui ne sortent dans aucune suite de coups possible.
+   * Pour chacune, barred = sa porte reste fermée par une barrière dans toutes les suites. */
+  function crDoomed(L, P) {
+    const A = crAnalyse(L, P, 200000);
+    if (!A) return [];
+    const n = L.cars.length, out = [];
+    for (let i = 0; i < n; i++) {
+      if (P[i] < 0 || A.S.some(Q => Q[i] < 0)) continue;
+      const c = L.cars[i], side = crSide(c), bars = L.bars || [];
+      const b = bars.findIndex(x => x.side === side && x.at === c.line);
+      out.push({ car: i, barred: b >= 0 && A.S.every(Q => !((Q[n] || 0) & (1 << b))) });
+    }
+    return out;
+  }
   /* meilleur coup depuis P : { left: coups restants au mieux (Infinity = impasse), car } */
   function crBest(L, P) {
     const A = crAnalyse(L, P, 200000);
@@ -353,7 +367,7 @@
     return { left: A.win[0], car: mv ? mv[0] : null };
   }
 
-  const api = { MAX_LEVEL, PALETTE_SIZE, PZ_N, generate, solve, rounds, pathOf, cellIdx, makeGrid, params, pzSolve, crOcc, crSlide, crApply, crStart, crAnalyse, crBest };
+  const api = { MAX_LEVEL, PALETTE_SIZE, PZ_N, generate, solve, rounds, pathOf, cellIdx, makeGrid, params, pzSolve, crOcc, crSlide, crApply, crStart, crAnalyse, crBest, crDoomed };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.CarEngine = api;
 })(typeof window !== 'undefined' ? window : this);

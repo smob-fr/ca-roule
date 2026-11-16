@@ -1506,6 +1506,8 @@ body.daily .level-chip {
 .cbtn.on i { background: radial-gradient(circle at 40% 35%, #b6ffd9, #1fb874); box-shadow: 0 0 0 3px rgba(52, 213, 138, 0.4), 0 0 12px rgba(52, 213, 138, 0.7); animation: none; }
 @keyframes cbtn { 50% { transform: scale(0.85); } }
 .car.nope { animation: nope 0.4s; }
+.car.doomed { animation: doomed 0.9s ease-in-out infinite; }
+@keyframes doomed { 50% { filter: drop-shadow(0 0 12px #ff4d6d) brightness(1.15); } }
 @keyframes nope { 20%, 60% { translate: 3px 0; } 40%, 80% { translate: -3px 0; } }
 body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
 @keyframes revpulse { 50% { filter: drop-shadow(0 0 10px #7cc0ff) brightness(1.15); } }
@@ -3428,13 +3430,25 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     }
     /* impasse ou réserve insuffisante ? */
     const b = E.crBest(S.L, S.P);
-    if (b.left === Infinity) { S.over = true; S.loseReason = 'dead'; const s = S.session; setTimeout(() => { if (s === S.session) lose(); }, 650); return; }
+    if (b.left === Infinity) { S.doomed = E.crDoomed(S.L, S.P); S.doomed.forEach(d => S.nodes[d.car].classList.add('doomed')); S.over = true; S.loseReason = 'dead'; const s = S.session; setTimeout(() => { if (s === S.session) lose(); }, 650); return; }
     if (S.moves + b.left > S.reserve) { S.over = true; S.loseReason = 'fuel'; S.needed = b.left; const s = S.session; setTimeout(() => { if (s === S.session) lose(); }, 650); return; }
     if (T[i] < 0) { if (Math.random() < 0.5) mood('cheer', pick(['Bye bye !', 'Et une de moins !', 'Vroum !']), 700); }
     tutoLater(650);
   }
+  /* explication de l'impasse : quelle voiture est condamnée, et pourquoi */
+  function deadText() {
+    const D = S.doomed || [];
+    const nm = d => 'la voiture ' + (NAMEFR[S.L.cars[d.car].color] || '');
+    if (!D.length) return 'Depuis cette position, plus aucune solution n\'existe.';
+    const names = D.map(nm), list = names.length > 1 ? names.slice(0, -1).join(', ') + ' et ' + names[names.length - 1] : names[0];
+    const one = D.length === 1;
+    if (D.every(d => d.barred)) return (one ? 'La barrière de ' + list + ' ne peut plus se lever : plus aucune voiture ne peut s\'arrêter sur le bouton jaune. Elle ne sortira jamais.' : 'Les barrières de ' + list + ' ne peuvent plus se lever : ces voitures ne sortiront jamais.');
+    return one ? list.charAt(0).toUpperCase() + list.slice(1) + ' est bloquée pour de bon : elle ne pourra plus jamais sortir.' : list.charAt(0).toUpperCase() + list.slice(1) + ' sont bloquées pour de bon : elles ne sortiront jamais.';
+  }
   function crUndo() {
     if (!S.hist.length) return;
+    S.nodes.forEach(n => n.classList.remove('doomed'));
+    S.doomed = [];
     Stats.count('undos');
     S.undoUsed = true;
     S.P = S.hist.pop();
@@ -3486,7 +3500,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     const dead = S.loseReason === 'dead';
     $('lose-title').textContent = dead ? 'Impasse !' : 'Panne sèche !';
     $('lose-text').textContent = dead
-      ? 'Depuis cette position, plus aucune voiture ne peut sortir. Annulez le dernier coup ou recommencez.'
+      ? deadText() + ' Annulez le dernier coup ou recommencez.'
       : 'Il faudrait encore ' + S.needed + ' coups, la réserve ne suffit plus. Ajoutez 3 coups ou recommencez.';
     $('lose-revive').innerHTML = dead ? 'Annuler le dernier coup' : '+3 coups <span class="badge">VIDÉO</span>';
     mood('sad', pick(LOSE_LINES), 0);
