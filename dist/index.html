@@ -1578,7 +1578,40 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
 .toast b { font-family: var(--font-display); font-size: 16px; }
 .toast.in { animation: toastin 0.4s cubic-bezier(.2, 1.5, .4, 1); }
 @keyframes toastin { from { transform: translate(-50%, -30px); opacity: 0; } }
+/* ---------- nouveauté : barrières ---------- */
+.intro-card { gap: 12px; }
+.intro-card p { font-size: 14px; }
+.intro-card p b { color: #fff; }
+.intro-warn { font-size: 12.5px !important; color: #ffb3c0 !important; }
+.demos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.demo { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.demo figcaption { font-size: 12px; font-weight: 900; line-height: 1.25; }
+.demo figcaption.bad { color: #ff9aab; }
+.demo figcaption.good { color: #6ff0b0; }
+.dboard { position: relative; width: 104px; height: 78px; border-radius: 8px; overflow: visible; background-color: #3a3e55; background-image: linear-gradient(to right, rgba(255,255,255,.08) 1.5px, transparent 1.5px), linear-gradient(to bottom, rgba(255,255,255,.08) 1.5px, transparent 1.5px); background-size: 26px 26px; box-shadow: 0 0 0 4px #6a7194, 0 8px 14px rgba(0,0,0,.4); }
+.dboard > span { position: absolute; display: block; }
+.dgate { right: -9px; width: 5px; height: 18px; border-radius: 2px; background: repeating-linear-gradient(45deg, #ef5b43 0 4px, #4a90f2 4px 8px, #f4b81d 8px 12px); }
+.dbar { right: 1px; width: 5px; height: 20px; border-radius: 2px; background: repeating-linear-gradient(180deg, #fff 0 4px, #ff4d6d 4px 8px); transform-origin: 50% 0; z-index: 3; }
+.stop .dbar { animation: dbar 4s ease-in-out infinite; }
+@keyframes dbar { 0%, 42% { transform: rotate(0); } 52%, 88% { transform: rotate(75deg); opacity: .5; } 100% { transform: rotate(0); } }
+.dbtn { width: 26px; height: 26px; display: grid !important; place-items: center; }
+.dbtn i { width: 60%; height: 60%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ffe27a, #f29a00); box-shadow: 0 0 8px rgba(255, 201, 51, .7); }
+.stop .dbtn i { animation: dbtn 4s ease-in-out infinite; }
+@keyframes dbtn { 0%, 38% { background: radial-gradient(circle at 40% 35%, #ffe27a, #f29a00); } 42%, 88% { background: radial-gradient(circle at 40% 35%, #b6ffd9, #1fb874); box-shadow: 0 0 10px rgba(52, 213, 138, .8); } }
+.dcar { z-index: 2; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .45)); }
+.dcar svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.dpass { animation: dpass 4s cubic-bezier(.5, 0, .8, .4) infinite; }
+@keyframes dpass { 0%, 15% { transform: translateX(0); opacity: 1; } 55% { transform: translateX(150px); opacity: 1; } 60%, 85% { transform: translateX(150px); opacity: 0; } 86%, 100% { transform: translateX(0); opacity: 0; } 100% { opacity: 1; } }
+.dstop { animation: dstop 4s cubic-bezier(.45, 0, .3, 1) infinite; }
+@keyframes dstop { 0%, 15% { transform: translateX(0); } 35%, 92% { transform: translateX(26px); } 100% { transform: translateX(0); } }
+.btn-guide { position: absolute; z-index: 6; pointer-events: none; }
+.btn-guide::before { content: ''; position: absolute; inset: 0; box-sizing: border-box; border: 3px dashed var(--sign); border-radius: 50%; animation: ghost 1s ease-in-out infinite; }
+/* étiquette calée à gauche ou à droite quand le bouton est au bord */
+.btn-guide.l span { left: 0; transform: none; }
+.btn-guide.r span { left: auto; right: 0; transform: none; }
+.btn-guide span { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); padding: 4px 9px; border-radius: 999px; background: var(--sign); color: #4a2a00; font-size: 11.5px; font-weight: 900; white-space: nowrap; box-shadow: 0 4px 10px rgba(0, 0, 0, .4); }
 @media (prefers-reduced-motion: reduce) {
+  .stop .dbar, .stop .dbtn i, .dpass, .dstop, .btn-guide { animation: none !important; }
   .mini-btn.ready, .chest-art, .toast.in { animation: none; }
   .cnode.cur { animation: none; }
   .cbtn i, body.reversing .car { animation: none; }
@@ -1868,6 +1901,21 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   </div>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Nouveauté : explication animée d'un nouvel élément (barrières) -->
+<div class="scrim over" id="intro" hidden>
+  <div class="card intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+    <p class="eyebrow">Nouveau</p>
+    <h2 id="intro-title">Les barrières</h2>
+    <div class="demos">
+      <figure class="demo"><div class="dboard" id="demo-pass"></div><figcaption class="bad">✗ Elle passe dessus : rien ne se passe</figcaption></figure>
+      <figure class="demo"><div class="dboard" id="demo-stop"></div><figcaption class="good">✓ Elle s'arrête dessus : la barrière se lève</figcaption></figure>
+    </div>
+    <p>Une barrière ferme une porte. Pour la lever, une voiture doit <b>s'arrêter</b> sur le bouton jaune, par exemple en butant contre une autre voiture. Si elle ne fait que passer dessus, rien ne se passe.</p>
+    <p class="intro-warn">Attention : s'il ne reste plus aucune voiture capable de s'arrêter sur le bouton, la porte restera fermée pour de bon.</p>
+    <button class="btn primary" id="intro-ok" type="button">J'ai compris</button>
+  </div>
+</div>
 
 <!-- Garage : styles de voitures -->
 <div class="scrim sheet" id="garage" hidden>
@@ -2579,7 +2627,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
      skin_equip, reminder_set, setting_change, home_choice. Envoi groupé (fetch), et sendBeacon à la fermeture. */
   const STATS_HOST = 'https://eu.i.posthog.com';
   const STATS_KEY = (window.CAROULE_STATS && window.CAROULE_STATS.key) || "phc_tYQQxGun3aD3jRuJY8dvLmE2STkP62vTh5jNDJuQ4kXr";
-  const BUILD = "2026-11-16-83a6ac0";
+  const BUILD = "2026-11-16-f26a327";
   const Stats = (function () {
     let queue = [], timer = null, A = null;
     if (!S.uid) { S.uid = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); save(); }
@@ -3075,7 +3123,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     };
     const mech = [
       ['colgate', crColored(S.L), 'Portes de couleur : seules les voitures de cette couleur passent. Les portes rayées acceptent tout le monde.'],
-      ['bar', S.L.bars.length > 0, 'Barrière : garez une voiture sur le bouton jaune pour ouvrir la porte.']
+      ['bar', S.L.bars.length > 0, 'Barrière : une voiture doit s\'arrêter sur le bouton jaune, pas seulement passer dessus.']
     ];
     let text = S.L.boss ? 'Niveau géant ! Prenez le temps de repérer les blocages avant de toucher.' : tips[S.level] || '';
     for (const m of mech) if (m[1] && !S.seen[m[0]]) { text = m[2]; S.seen[m[0]] = 1; save(); break; }
@@ -3212,6 +3260,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     hud();
     layout();
     if (!homeOpen) Stats.begin('run', S.level, { opt: S.opt, cars: S.L.cars.length, city: S.L.city });
+    if (!homeOpen && S.L.bars.length && !S.seen.barIntro) showBarIntro();
     if (!reduce) board.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220 });
   }
 
@@ -4029,6 +4078,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
   /* Course : la main tapote une voiture qui a la voie libre. */
   function tutoRun() {
     tutoClear();
+    if (S.mode === 'run' && S.L && S.L.bars.length && S.seen.barLevel === S.level && !(S.P[S.L.cars.length] | 0) && !S.over && !homeOpen) { barGuide(); return; }
     if (S.mode !== 'run' || S.level > TUTO_LEVELS || S.over || homeOpen) return;
     const id = pickHint();
     if (id == null) return;
@@ -4036,6 +4086,42 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     if (!node) return;
     tutoEl = handEl(board, node.offsetLeft + node.offsetWidth / 2, node.offsetTop + node.offsetHeight / 2, 'tap');
   }
+  /* premier niveau à barrière : on montre le bouton et la voiture du prochain bon coup, jusqu'à ce que la barrière se lève */
+  function barGuide() {
+    const bt = S.L.buttons[0], cell = S.cell;
+    if (!bt || !cell) return;
+    tutoTarget = document.createElement('div');
+    tutoTarget.className = 'btn-guide' + (bt.x < 1 ? ' l' : bt.x >= S.L.W - 1 ? ' r' : '');
+    Object.assign(tutoTarget.style, { left: bt.x * cell + 'px', top: bt.y * cell + 'px', width: cell + 'px', height: cell + 'px' });
+    tutoTarget.innerHTML = '<span>Arrêtez une voiture ici</span>';
+    board.appendChild(tutoTarget);
+    const id = pickHint(), node = id != null ? S.nodes[id] : null;
+    if (node) tutoEl = handEl(board, node.offsetLeft + node.offsetWidth / 2, node.offsetTop + node.offsetHeight / 2, 'tap');
+  }
+  /* fenêtre « Nouveau : les barrières » avec deux scènes animées */
+  function demoScene(el, stop) {
+    const c = 26, car = (x, y, len, col, cls) => '<span class="dcar ' + (cls || '') + '" style="left:' + x * c + 'px;top:' + y * c + 'px;width:' + len * c + 'px;height:' + c + 'px">' + carSVG(len, col, SKINS[0]) + '</span>';
+    el.innerHTML = '<span class="dgate" style="top:' + (c + 4) + 'px"></span>' +
+      '<span class="dbar" style="top:3px"></span><span class="dgate" style="top:4px;opacity:.9"></span>' +
+      '<span class="dbtn" style="left:' + 2 * c + 'px;top:' + c + 'px"><i></i></span>' +
+      (stop ? '<span class="dcar dblock" style="left:' + 3 * c + 'px;top:' + c + 'px;width:' + c + 'px;height:' + 2 * c + 'px"><span style="position:absolute;width:' + 2 * c + 'px;height:' + c + 'px;left:' + (-c / 2) + 'px;top:' + (c / 2) + 'px;transform:rotate(90deg)">' + carSVG(2, '#8a90b0', SKINS[0]) + '</span></span>' : '') +
+      car(0, 1, 2, '#4a90f2', stop ? 'dstop' : 'dpass');
+    el.classList.toggle('stop', stop);
+  }
+  function showBarIntro() {
+    demoScene($('demo-pass'), false);
+    demoScene($('demo-stop'), true);
+    tutoClear();
+    show($('intro'));
+    $('intro-ok').focus();
+  }
+  $('intro-ok').addEventListener('click', () => {
+    hide($('intro'));
+    S.seen.barIntro = 1;
+    S.seen.barLevel = S.level;
+    save();
+    tutoLater(200);
+  });
   /* Casse-tête : la main fait glisser la voiture du prochain coup optimal jusqu'à sa case cible. */
   function tutoPz() {
     tutoClear();
@@ -5107,6 +5193,7 @@ body.reversing .car { animation: revpulse 1s ease-in-out infinite; }
     if (!$('ad').hidden && !$('ad-close').disabled) closeAd();
     else if (!$('levels').hidden) hide($('levels'));
     else if (!$('garage').hidden) hide($('garage'));
+    else if (!$('intro').hidden) $('intro-ok').click();
     else if (!$('chest').hidden) hide($('chest'));
     else if (!$('missions').hidden) hide($('missions'));
     else if (!$('aid').hidden) hide($('aid'));
